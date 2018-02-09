@@ -1,3 +1,9 @@
+ToC:
+- [Asset-Allocation](#asset-allocation)
+    - [Introduction](#introduction)
+- [Development](#development)
+    - [Data Store](#data-store)
+
 # Asset-Allocation
 Asset Allocation implementation in Python
 
@@ -10,3 +16,11 @@ This will include its own data storage.
 Dependencies will include:
 - price database, for calculation of current value
 - transaction database for securities, for calculation of current value
+
+# Development
+
+Some development info.
+
+## Data Store
+
+Data storage is in a SQLite database, which allows for portability, easy queries and relatively easy editing.
