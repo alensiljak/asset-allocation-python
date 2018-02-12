@@ -11,7 +11,7 @@ def cli():
 @click.command()
 @click.option("--format", default="ascii", help="format for the report output. ascii or html.")
                 # prompt="output format")
-def print(format):
+def list(format):
     """ Print current allocation to the console. """
     print(f"This would print the Asset Allocation report in {format} format. Incomplete.")
 
@@ -22,5 +22,5 @@ def add(name):
     print("in add")
 
 
-cli.add_command(print)
+cli.add_command(list)
 cli.add_command(add)
