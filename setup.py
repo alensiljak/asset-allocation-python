@@ -168,7 +168,7 @@ setup(
     entry_points={  # Optional
         'console_scripts': [
             # 'aa=asset_allocation.asset_allocation:main',
-            'aa=asset_allocation.asset_allocation:cli',
+            'aa=asset_allocation.cli:cli',
         ],
     },
 )
