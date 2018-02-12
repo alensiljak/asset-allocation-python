@@ -33,12 +33,15 @@ class AssetClassStock(Base):
         return "<AssetClass_Stock (assetclass=%s, symbol='%s')>" % (self.assetclassid, self.symbol)
 
 
-# connection
-engine = create_engine('sqlite://data/asset_allocation.db')
+def get_session() -> sessionmaker:
+    # connection
+    engine = create_engine('sqlite://data/asset_allocation.db')
 
-# create metadata (?)
-Base.metadata.create_all(engine)
+    # create metadata (?)
+    Base.metadata.create_all(engine)
 
-# create session
-Session = sessionmaker(bind=engine)
-session = Session()
+    # create session
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    return session

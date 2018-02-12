@@ -1,7 +1,5 @@
 """ Test configuration """
-# try: import simplejson as json
-# except ImportError: import json
-# import pytest
+import pytest
 
 # @pytest.fixture(scope="session")
 # def settings_db() -> Settings:
@@ -25,8 +23,6 @@
 #     """
 #     Declares the settings and Book Aggregate as autouse.
 #     This means that individual tests do not need to mark the fixture explicitly.
-#     It is more useful when there is functionality that needs to be executed than for dependency
-#     injection.
 #     """
 #     @pytest.fixture(autouse=True, scope="session")
 #     def settings(self):
@@ -39,9 +35,3 @@
 #     def svc(self):
 #         """ global Book Aggregate for all tests """
 #         return svc(self.settings)
-
-
-# def create_test_data(svc: BookAggregate):
-#     """ Create some data for in-memory database """
-#     cur = data_factory.create_currency("AUD")
-#     svc.book.session.add(cur)
