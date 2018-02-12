@@ -19,7 +19,8 @@ Dependencies will include:
 
 # Development
 
-Requirements are generated with _pipreqs_.
+Requirements are generated with _pipreqs_. Install requirements from requirements.txt.
+
 
 ## Data Store
 

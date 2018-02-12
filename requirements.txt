@@ -1,0 +1,2 @@
+setuptools==28.8.0
+click==6.7
