@@ -1,5 +1,6 @@
 """ Test configuration """
 import pytest
+from asset_allocation.config import Config
 
 # @pytest.fixture(scope="session")
 # def settings_db() -> Settings:
@@ -19,11 +20,14 @@ import pytest
 #     return svc
 
 
-# class TestSettings(object):
-#     """
-#     Declares the settings and Book Aggregate as autouse.
-#     This means that individual tests do not need to mark the fixture explicitly.
-#     """
+class TestSettings(object):
+    """
+    Declares the settings and Book Aggregate as autouse.
+    This means that individual tests do not need to mark the fixture explicitly.
+    """
+    def __init__(self):
+        self.__config = Config()
+
 #     @pytest.fixture(autouse=True, scope="session")
 #     def settings(self):
 #         """ Returns the test settings json """
@@ -35,3 +39,8 @@ import pytest
 #     def svc(self):
 #         """ global Book Aggregate for all tests """
 #         return svc(self.settings)
+
+    @pytest.fixture(autouse=True, scope="session")
+    def config(self):
+        """ Real configuration """
+        return self.__config
