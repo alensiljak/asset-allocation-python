@@ -4,21 +4,31 @@ Main entry point to the library
 import sys
 import click
 
-@click.command()
-@click.argument("command", default="default")
-@click.option("--name")
+@click.group()
+def cli():
+    pass
 
-def main(command, name):
+def main():
     """ Run from the console """
+    print("in main")
+    show("html")
 
-    if command == "default":
-        print("without any arguments, this should print out the current allocation report.")
-    elif command == "add":
-        print("add asset class")
-
-def print_allocation():
+@click.command()
+@click.option("--format", default="ascii", help="format for the report output. ascii or html.")
+                # prompt="output format")
+def show(format):
     """ Print current allocation to the console. """
-    print("allocation. Incomplete")
+    print(f"This would print the Asset Allocation report in {format} format. Incomplete.")
 
-if __name__ == '__main__':
-    main()
+@click.command()
+@click.option("--name", prompt="Asset Class name")
+def add(name):
+    """ Adds Asset Class """
+    print("in add")
+
+
+cli.add_command(show)
+cli.add_command(add)
+
+# if __name__ == '__main__':
+#     main()
