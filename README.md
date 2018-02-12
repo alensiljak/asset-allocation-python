@@ -19,8 +19,9 @@ Dependencies will include:
 
 # Development
 
-Some development info.
+Requirements are generated with _pipreqs_.
 
 ## Data Store
 
 Data storage is in a SQLite database, which allows for portability, easy queries and relatively easy editing.
+The sample data file is in "data" folder.
