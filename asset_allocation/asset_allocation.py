@@ -13,13 +13,13 @@ def cli():
                 # prompt="output format")
 def list(format):
     """ Print current allocation to the console. """
-    print(f"This would print the Asset Allocation report in {format} format. Incomplete.")
+    print(f"This would print the Asset Allocation report in **{format}** format. Incomplete.")
 
 @click.command()
-@click.option("--name", prompt="Asset Class name")
+@click.option("--name", prompt="Asset Class name", help="Name of the Asset Class")
 def add(name):
-    """ Adds Asset Class """
-    print("in add")
+    """ Add new Asset Class """
+    print(f"Here we would add {name}.")
 
 
 cli.add_command(list)
