@@ -122,7 +122,7 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['sqlalchemy'],  # Optional
+    install_requires=['Click', 'sqlalchemy'],  # Optional
 
     python_requires='>=3',
 
@@ -165,10 +165,10 @@ setup(
     #
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
-
-    # entry_points={  # Optional
-    #     'console_scripts': [
-    #         'aa=asset_allocation.asset_allocation:main',
-    #     ],
-    # },
+    entry_points={  # Optional
+        'console_scripts': [
+            # 'aa=asset_allocation.asset_allocation:main',
+            'aa=asset_allocation.asset_allocation:cli',
+        ],
+    },
 )
