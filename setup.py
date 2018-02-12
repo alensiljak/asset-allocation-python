@@ -167,7 +167,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'aa=asset_allocation:main',
+            'aa=asset_allocation.asset_allocation:main',
         ],
     },
 )
