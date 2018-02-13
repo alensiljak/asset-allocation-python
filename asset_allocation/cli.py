@@ -3,6 +3,7 @@ Main entry point to the library
 """
 import sys
 import click
+from .config_cli import config
 
 @click.group()
 def cli():
@@ -25,3 +26,4 @@ def add(name):
 
 cli.add_command(show)
 cli.add_command(add)
+cli.add_command(config)

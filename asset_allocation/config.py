@@ -32,6 +32,11 @@ class Config:
         in_memory.close()
         return content
 
+    def delete_user_config(self):
+        """ Delete current user's config file """
+        file = self.get_config_path()
+        os.remove(file)
+
     def __read_config(self, ini_path: str):
         """ Read the config file """
         if ini_path:
@@ -51,8 +56,8 @@ class Config:
             raise FileNotFoundError("configuration file not found %s", file_path)
 
         #log(DEBUG, "using config file %s", file_path )
-        with open(file_path) as cfg_file:
-            self.config.read_file(cfg_file)
+        contents = self.get_contents(file_path)
+        self.config.read_string(contents)
 
     def __get_config_template_path(self) -> str:
         """ gets the default config path from resources """
@@ -84,3 +89,10 @@ class Config:
         dst_dir = self.__get_user_path()
         dst = dst_dir + "/" + config_filename
         return dst
+
+    def get_contents(self, file_path) -> str:
+        """ Reads the contents of the config file """
+        contents = None
+        with open(file_path) as cfg_file:
+            contents = cfg_file.read()
+        return contents
