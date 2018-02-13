@@ -41,8 +41,9 @@ class Config:
             log(ERROR, "file not found: %s", file_path)
             raise FileNotFoundError("configuration file not found %s", file_path)
 
-        log(DEBUG, "using config file %s", file_path )
-        self.config.read_file(file_path)
+        #log(DEBUG, "using config file %s", file_path )
+        with open(file_path) as cfg_file:
+            self.config.read_file(cfg_file)
 
     def get_config_path(self) -> str:
         """ gets the default config path from resources """
