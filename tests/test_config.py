@@ -33,3 +33,9 @@ def test_locating_user_dir():
     log(DEBUG, "%s", user_path1)
     assert user_path1 == "yo"
     # assert user_path2 == "yo"
+
+def test_user_config_created():
+    """ test if the user configuration instance is created """
+    cfg = Config()
+    ini_path = cfg.get_config_path()
+    assert ini_path is not None
