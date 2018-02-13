@@ -18,46 +18,38 @@ class Config:
     """ Reads and writes Asset Allocation config file """
 
     def __init__(self, ini_path: str = None):
-        # todo read the config file on creation
-        # Where to expect it? In the same folder?
+        # Read the config file on creation of the object.
         self.config = ConfigParser()
-        self.__read_config(ini_path)
 
-    def print_all(self):
-        """ Display all values """
-        in_memory = io.StringIO("")
-        self.config.write(in_memory)
-        content = in_memory.read()
-        log(DEBUG, "config content: %s", content)
-        in_memory.close()
-        return content
+        if not ini_path:
+            # use the default path.
+            file_path = os.path.abspath(self.get_config_path())
+            # copy the template if file does not yet exist
+            if not os.path.exists(file_path):
+                self.__create_user_config()
+        else:
+            file_path = os.path.abspath(ini_path)
+
+        self.__read_config(file_path)
 
     def delete_user_config(self):
         """ Delete current user's config file """
         file = self.get_config_path()
         os.remove(file)
 
-    def __read_config(self, ini_path: str):
+    def __read_config(self, file_path: str):
         """ Read the config file """
-        if ini_path:
-            # file_path = os.path.relpath(ini_path)
-            file_path = os.path.abspath(ini_path)
-            if not os.path.exists(file_path):
-                raise FileNotFoundError("File path not found: %s", file_path)
-        else:
-            file_path = self.get_config_path()
-            # copy the template if file does not yet exist
-            if not os.path.exists(file_path):
-                self.__create_user_config()
-        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("File path not found: %s", file_path)
         # check if file exists
         if not os.path.isfile(file_path):
             log(ERROR, "file not found: %s", file_path)
             raise FileNotFoundError("configuration file not found %s", file_path)
 
-        #log(DEBUG, "using config file %s", file_path )
-        contents = self.get_contents(file_path)
-        self.config.read_string(contents)
+        # log(DEBUG, "using config file %s", file_path)
+        # contents = self.get_contents(file_path)
+        # self.config.read_string(contents)
+        self.config.read(file_path)
 
     def __get_config_template_path(self) -> str:
         """ gets the default config path from resources """
@@ -90,9 +82,31 @@ class Config:
         dst = dst_dir + "/" + config_filename
         return dst
 
-    def get_contents(self, file_path) -> str:
+    def get_contents(self) -> str:
         """ Reads the contents of the config file """
-        contents = None
-        with open(file_path) as cfg_file:
-            contents = cfg_file.read()
-        return contents
+        content = None
+        # with open(file_path) as cfg_file:
+        #     contents = cfg_file.read()
+
+        # Dump the current contents into an in-memory file.
+        in_memory = io.StringIO("")
+        self.config.write(in_memory)
+        in_memory.seek(0)
+        content = in_memory.read()
+        #     log(DEBUG, "config content: %s", content)
+        in_memory.close()
+        return content
+
+    def set(self, option, value):
+        """ Sets a value in config """
+        # As currently we only have 1 section. 
+        section = "Databases"
+        self.config.set(section, option, value)
+        self.save()
+    
+    def save(self):
+        """ Save the config file """
+        file_path = self.get_config_path()
+        contents = self.get_contents()
+        with open(file_path, mode='w') as cfg_file:
+            cfg_file.write(contents)
