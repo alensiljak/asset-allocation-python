@@ -1,5 +1,7 @@
 """ Test the configuration mechanism """
 
+import os
+from logging import log, DEBUG
 from asset_allocation.config import Config
 from configparser import ConfigParser
 
@@ -22,3 +24,12 @@ def test_create_config():
     cfg.add_section("one")
     cfg.set("one", "blah", "yo!")
     #cfg.write()
+
+def test_locating_user_dir():
+    """ Locate user directory, for storing the config file """
+    user_path1 = os.path.expanduser("~")
+    # user_path2 = os.path.expanduser("~user")
+    # print(user_path1)
+    log(DEBUG, "%s", user_path1)
+    assert user_path1 == "yo"
+    # assert user_path2 == "yo"

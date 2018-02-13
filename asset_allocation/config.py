@@ -1,4 +1,8 @@
-""" Configuration handling """
+""" 
+Configuration handling 
+The config file is stored in data directory and is located by using Resources.
+Ref: http://peak.telecommunity.com/DevCenter/setuptools#non-package-data-files
+"""
 from configparser import ConfigParser
 from logging import log, DEBUG, ERROR
 import io
@@ -49,3 +53,7 @@ class Config:
         """ gets the default config path from resources """
         filename = resource_filename(Requirement.parse("Asset-Allocation"), config_filename)
         return filename
+
+    def get_user_path(self) -> str:
+        """ Returns the current user's home directory """
+        return os.path.expanduser("~")
