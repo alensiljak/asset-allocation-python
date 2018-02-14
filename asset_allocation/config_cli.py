@@ -2,7 +2,7 @@
 CLI for handling config files
 """
 import click
-from asset_allocation.config import Config
+from asset_allocation.config import Config, ConfigKeys
 
 @click.group()
 def config():
@@ -24,20 +24,33 @@ def show():
     print(contents)
 
 @click.command()
-@click.option("--db", help="Database path. If only name used, it will be loaded from project's data directory.")
+@click.option("--aadb", help="Asset Allocation database path. If only name used, it will be loaded from project's data directory.")
 # @click.option("--key", help="The name of the option to set.")
 # @click.option("--val", help="The name of the option to set.")
-def set(db):
+def set(aadb):
     """ Sets the values in the config file """
     cfg = Config()
 
-    if db:
-        cfg.set("asset_allocation", db)
-        print(f"The database has been set to {db}.")
+    if aadb:
+        cfg.set(ConfigKeys.asset_allocation_database_path, aadb)
+        print(f"The database has been set to {aadb}.")
         return
 
     print(f"Use --help parameter for more information.")
 
+@click.command()
+@click.option("--aadb", is_flag=True, help="Displays the Asset Allocation database name/path.")
+def get(aadb: str):
+    """ Retrieves a value from config """
+    if (aadb):
+        cfg = Config()
+        value = cfg.get(ConfigKeys.asset_allocation_database_path)
+        click.echo(value)
+    
+    if not aadb:
+        click.echo("Use --help for more information.")
+
 config.add_command(delete)
+config.add_command(get)
 config.add_command(set)
 config.add_command(show)

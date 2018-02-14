@@ -3,6 +3,7 @@ Configuration handling
 The config file is stored in data directory and is located by using Resources.
 Ref: http://peak.telecommunity.com/DevCenter/setuptools#non-package-data-files
 """
+from enum import Enum, auto
 from configparser import ConfigParser
 from logging import log, DEBUG, ERROR
 import io
@@ -13,6 +14,12 @@ from pkg_resources import Requirement, resource_filename
 
 config_filename = "asset_allocation.ini"
 #config_filename = "data/asset_allocation.ini"
+
+
+class ConfigKeys(Enum):
+    asset_allocation_database_path = auto(),
+    price_database_path = auto()
+
 
 class Config:
     """ Reads and writes Asset Allocation config file """
@@ -97,13 +104,23 @@ class Config:
         in_memory.close()
         return content
 
-    def set(self, option, value):
+    def set(self, option: ConfigKeys, value):
         """ Sets a value in config """
+        assert isinstance(option, ConfigKeys)
+
         # As currently we only have 1 section. 
         section = "Databases"
-        self.config.set(section, option, value)
+        self.config.set(section, option.name, value)
         self.save()
     
+    def get(self, option: ConfigKeys):
+        """ Retrieves a config value """
+        assert isinstance(option, ConfigKeys)
+
+        # Currently only one section is used
+        section = "Databases"
+        return self.config.get(section, option.name)
+
     def save(self):
         """ Save the config file """
         file_path = self.get_config_path()
