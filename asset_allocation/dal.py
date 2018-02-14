@@ -34,7 +34,8 @@ class AssetClass(Base):
     #, cascade = "all,delete")
 
     def __repr__(self):
-        return "<Tag (name='%s')>" % (self.name)
+        return "<AssetClass (name='%s',id='%s',allocation='%s',parent='%s')>" % (
+            self.name, self.id, self.allocation, self.parentid)
 
 
 class AssetClassStock(Base):
@@ -56,7 +57,7 @@ def get_session():
     # connection
     con_str = "sqlite:///" + db_path
     # Display all SQLite info with echo.
-    engine = create_engine(con_str, echo=True)
+    engine = create_engine(con_str, echo=False)
 
     # create metadata (?)
     Base.metadata.create_all(engine)
