@@ -14,7 +14,7 @@ Examples:
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import Table, Column, Integer, String, REAL, DateTime, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, Float
 from asset_allocation.config import Config, ConfigKeys
 
 Base = declarative_base()
@@ -26,15 +26,15 @@ class AssetClass(Base):
     id = Column(Integer, primary_key=True)
     parentid = Column(Integer)
     name = Column(String(255), unique=True, nullable=False)
-    allocation = Column(REAL)
+    allocation = Column(Float(asdecimal=True), default=0)
     sortorder = Column(Integer)
-    diff_adjustment = Column(REAL)
+    diff_adjustment = Column(Float(asdecimal=True))
 
     stock_links = relationship('AssetClassStock', backref="assetclass", lazy='dynamic') 
     #, cascade = "all,delete")
 
     def __repr__(self):
-        return "<AssetClass (name='%s',id='%s',allocation='%s',parent='%s')>" % (
+        return "<AssetClass (name='%s',id='%s',allocation='%.2f',parent='%s')>" % (
             self.name, self.id, self.allocation, self.parentid)
 
 

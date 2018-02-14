@@ -17,7 +17,16 @@ class AppAggregate:
         session.add(item)
         session.commit()
 
-    def get(self, id: int):
+    def delete(self, id: int):
+        """ Delete asset class """
+        assert isinstance(id, int)
+
+        self.open_session()
+        to_delete = self.get(id)
+        self.session.delete(to_delete)
+        self.save()
+
+    def get(self, id: int) -> AssetClass:
         """ Loads Asset Class """
         self.open_session()
         item = self.session.query(AssetClass).filter(AssetClass.id == id).first()

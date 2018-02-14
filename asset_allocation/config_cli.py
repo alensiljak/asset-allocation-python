@@ -6,7 +6,7 @@ from asset_allocation.config import Config, ConfigKeys
 
 @click.group()
 def config():
-    """ Handles the config file """
+    """ Operates the config file """
     pass
 
 @click.command()
