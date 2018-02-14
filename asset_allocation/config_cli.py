@@ -24,17 +24,19 @@ def show():
     print(contents)
 
 @click.command()
-@click.option("--key", help="The name of the option to set.")
-@click.option("--val", help="The name of the option to set.")
-def set(key, val):
+@click.option("--db", help="Database path. If only name used, it will be loaded from project's data directory.")
+# @click.option("--key", help="The name of the option to set.")
+# @click.option("--val", help="The name of the option to set.")
+def set(db):
     """ Sets the values in the config file """
-    if not key:
-        print(f"Parameters --key and --val must be provided.")
+    cfg = Config()
+
+    if db:
+        cfg.set("asset_allocation", db)
+        print(f"The database has been set to {db}.")
         return
 
-    cfg = Config()
-    cfg.set(key, val)
-    print(f"The {key} has been set to {val}.")
+    print(f"Use --help parameter for more information.")
 
 config.add_command(delete)
 config.add_command(set)
