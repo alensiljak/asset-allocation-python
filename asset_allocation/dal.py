@@ -59,7 +59,7 @@ def get_session():
     engine = create_engine(con_str, echo=True)
 
     # create metadata (?)
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
 
     # create session
     Session = sessionmaker(bind=engine)
