@@ -4,7 +4,7 @@ Main entry point to the library
 import sys
 import click
 from asset_allocation.config_cli import config
-from asset_allocation.class_cli import ac
+from asset_allocation.assetclass_cli import ac
 from asset_allocation import dal
 
 @click.group()

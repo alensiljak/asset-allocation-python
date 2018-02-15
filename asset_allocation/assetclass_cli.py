@@ -2,6 +2,7 @@
 CLI for dealing with Asset Classes
 """
 import click
+import sys
 from decimal import Decimal
 from asset_allocation.app import AppAggregate
 from asset_allocation.dal import AssetClass
@@ -64,15 +65,47 @@ def edit(id: int, parent: int, alloc: Decimal):
     else:
         click.echo("No data modified. Use --help to see possible parameters.")
 
-@click.command()
-def list():
+@click.command("list")
+def my_list():
     """ Lists all asset classes """
     session = AppAggregate().open_session()
     classes = session.query(AssetClass).all()
     print(classes)
 
+@click.command("import")
+@click.argument("file") #, help="The path to the CSV file to import. The first row must contain column names."
+def my_import(file):
+    """ Import Asset Class(es) from a .csv file """
+    lines = ""
+    with open(file) as csv_file:
+        lines = csv_file.readlines()
+
+    # Header, the first line.    
+    header = lines[0]
+    lines.remove(header)
+    header = header.rstrip()
+    # print(f"header: {header}")
+
+    # Parse
+    counter = 0
+    app = AppAggregate()
+    app.open_session()
+    for line in lines:
+        # Create insert statements
+        line = line.rstrip()
+        command = f"insert into AssetClass ({header}) values ({line});"
+        # insert records
+        app.session.execute(command)
+        try:
+            app.save()
+        except:
+            print(f"error: ", sys.exc_info()[0])
+            app.session.close()
+        counter += 1
+    print(f"Data imported. {counter} rows created.")
 
 ac.add_command(add)
 ac.add_command(delete)
 ac.add_command(edit)
-ac.add_command(list)
+ac.add_command(my_import)
+ac.add_command(my_list)
