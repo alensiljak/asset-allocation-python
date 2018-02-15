@@ -14,7 +14,7 @@ def test_get_config_location():
 def test_config_read():
     """ Read config file """
     cfg = Config("../data/asset_allocation.ini")
-    content = cfg.print_all()
+    content = cfg.get_contents()
 
     assert content is not None
 

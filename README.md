@@ -3,6 +3,7 @@ ToC:
     - [Introduction](#introduction)
 - [Development](#development)
     - [Data Store](#data-store)
+- [Tests](#tests)
 
 # Asset-Allocation
 Asset Allocation implementation in Python
@@ -26,3 +27,8 @@ Requirements are generated with _pipreqs_. Install requirements from requirement
 
 Data storage is in a SQLite database, which allows for portability, easy queries and relatively easy editing.
 The sample data file is in "data" folder.
+
+# Tests
+
+To lint the code, execute `pylint` from the project root directory.
+To run tests, execute `pytest` from the project root directory.

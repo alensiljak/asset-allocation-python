@@ -16,6 +16,8 @@ def cli():
                 # prompt="output format")
 def show(format):
     """ Print current allocation to the console. """
+    # TODO load asset allocation
+    
     print(f"This would print the Asset Allocation report in **{format}** format. Incomplete.")
 
 
