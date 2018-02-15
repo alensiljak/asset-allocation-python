@@ -18,7 +18,8 @@ config_filename = "asset_allocation.ini"
 
 class ConfigKeys(Enum):
     asset_allocation_database_path = auto(),
-    price_database_path = auto()
+    price_database_path = auto(),
+    default_currency = auto()
 
 
 class Config:
