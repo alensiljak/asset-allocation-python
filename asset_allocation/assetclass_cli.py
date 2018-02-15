@@ -70,7 +70,8 @@ def my_list():
     """ Lists all asset classes """
     session = AppAggregate().open_session()
     classes = session.query(AssetClass).all()
-    print(classes)
+    for item in classes:
+        print(item)
 
 @click.command("import")
 @click.argument("file") #, help="The path to the CSV file to import. The first row must contain column names."
