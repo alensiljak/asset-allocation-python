@@ -10,7 +10,7 @@ class AppAggregate:
     def __init__(self):
         self.session = None
         # self.open_session()
-    
+
     def create_asset_class(self, item: AssetClass):
         """ Inserts the record """
         session = self.open_session()

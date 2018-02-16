@@ -1,2 +1,2 @@
 #import asset_allocation
-from . import models
+from . import model

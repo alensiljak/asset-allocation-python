@@ -16,17 +16,16 @@ from gnucash_portfolio.currencies import CurrencyAggregate
 
 class AssetBase:
     """Base class for asset group & class"""
-    def __init__(self, json_node):
-        self.data = json_node
+    def __init__(self):
         # reference to parent object
         self.parent: AssetClass = None
 
         # Set allocation %.
         self.allocation = Decimal(0)
-        if "allocation" in json_node:
-            self.allocation = Decimal(json_node["allocation"])
-        else:
-            self.allocation = Decimal(0)
+        # if "allocation" in json_node:
+        #     self.allocation = Decimal(json_node["allocation"])
+        # else:
+        self.allocation = Decimal(0)
         # How much is currently allocated, in %.
         self.curr_alloc = Decimal(0)
         # Difference between allocation and allocated.
@@ -49,13 +48,14 @@ class AssetBase:
     @property
     def name(self):
         """Group name"""
-        if not self.data:
-            return ""
+        pass
+        # if not self.data:
+        #     return ""
 
-        if "name" in self.data:
-            return self.data["name"]
-        else:
-            return ""
+        # if "name" in self.data:
+        #     return self.data["name"]
+        # else:
+        #     return ""
 
     @property
     def fullname(self):

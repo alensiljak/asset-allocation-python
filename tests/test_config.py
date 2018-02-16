@@ -13,7 +13,7 @@ def test_get_config_location():
 
 def test_config_read():
     """ Read config file """
-    cfg = Config("../data/asset_allocation.ini")
+    cfg = Config("data/asset_allocation.ini")
     content = cfg.get_contents()
 
     assert content is not None
@@ -31,8 +31,9 @@ def test_locating_user_dir():
     # user_path2 = os.path.expanduser("~user")
     # print(user_path1)
     log(DEBUG, "%s", user_path1)
-    assert user_path1 == "yo"
+    # assert user_path1 == "yo"
     # assert user_path2 == "yo"
+    assert user_path1 != None
 
 def test_user_config_created():
     """ test if the user configuration instance is created """

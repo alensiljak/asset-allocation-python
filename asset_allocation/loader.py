@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List
 from piecash import Book, Commodity
 from .model import AssetGroup, AssetClass, Stock
-from .config import Config
+from .config import Config, ConfigKeys
 
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """
