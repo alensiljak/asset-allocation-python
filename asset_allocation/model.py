@@ -14,7 +14,13 @@ from gnucash_portfolio.securities import SecurityAggregate, SecuritiesAggregate
 from gnucash_portfolio.currencies import CurrencyAggregate
 
 
-class AssetBase:
+class AssetAllocationModel:
+    """ The container class """
+    def __init__(self):
+        self.total_amount: Decimal = Decimal(0)
+        self.classes: List[AssetClass] = []
+
+class _AssetBase:
     """Base class for asset group & class"""
     def __init__(self):
         # reference to parent object
@@ -71,30 +77,27 @@ class AssetBase:
         return prefix + self.name
 
 
-class AssetGroup(AssetBase):
-    """Group contains other groups or asset classes"""
-    def __init__(self, json_node):
-        super().__init__(json_node)
-        self.classes = []
-
-
-class AssetClass(AssetBase):
+class AssetClass(_AssetBase):
     """Asset Class contains stocks"""
-    def __init__(self, json_node):
-        super().__init__(json_node)
+    def __init__(self):
+        super().__init__()
+
+        self.id = None
 
         # For cash asset class
         self.root_account = None
 
+        # It can contain only other classes OR stocks, not both at the same time!
+        self.classes = []
         self.stocks: List[Stock] = []
         # parse stocks
-        if "stocks" not in json_node:
-            return
+        # if "stocks" not in json_node:
+        #     return
 
-        for symbol in json_node["stocks"]:
-            stock = Stock(symbol)
-            # todo add asset class allocation for this security.
-            self.stocks.append(stock)
+        # for symbol in json_node["stocks"]:
+        #     stock = Stock(symbol)
+        #     # todo add asset class allocation for this security.
+        #     self.stocks.append(stock)
 
 
 class Stock:

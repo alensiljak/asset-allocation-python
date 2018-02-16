@@ -50,9 +50,10 @@ class AssetClassStock(Base):
         return "<AssetClass_Stock (assetclass=%s, symbol='%s')>" % (self.assetclassid, self.symbol)
 
 
-def get_session():
-    cfg = Config()
-    db_path = cfg.get(ConfigKeys.asset_allocation_database_path)
+def get_session(db_path: str):
+    """ Creates and opens a database session """
+    # cfg = Config()
+    # db_path = cfg.get(ConfigKeys.asset_allocation_database_path)
 
     # connection
     con_str = "sqlite:///" + db_path

@@ -2,8 +2,9 @@
 Application Aggregate
 Main entry point.
 """
-#from . import dal
 from .dal import AssetClass, AssetClassStock, get_session
+from .config import Config, ConfigKeys
+
 
 class AppAggregate:
     """ Provides entry points to the application """
@@ -34,7 +35,10 @@ class AppAggregate:
 
     def open_session(self):
         """ Opens a db session and returns it """
-        self.session = get_session()
+        cfg = Config()
+        db_path = cfg.get(ConfigKeys.asset_allocation_database_path)
+
+        self.session = get_session(db_path)
         return self.session
 
     def save(self):

@@ -19,6 +19,11 @@ from asset_allocation.config import Config
 #     #create_test_data(svc)
 #     return svc
 
+@pytest.fixture(scope="session")
+def config():
+    """ Test configuration """
+    return Config("data/asset_allocation.ini")
+
 
 class TestSettings(object):
     """
@@ -26,7 +31,7 @@ class TestSettings(object):
     This means that individual tests do not need to mark the fixture explicitly.
     """
     def __init__(self):
-        self.__config = Config()
+        self.__config = config()
 
 #     @pytest.fixture(autouse=True, scope="session")
 #     def settings(self):

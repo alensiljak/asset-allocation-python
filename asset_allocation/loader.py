@@ -2,8 +2,11 @@
 from decimal import Decimal
 from typing import List
 from piecash import Book, Commodity
-from .model import AssetGroup, AssetClass, Stock
+from . import dal
+from .model import AssetClass, Stock, AssetAllocationModel
 from .config import Config, ConfigKeys
+from .maps import AssetClassMapper
+
 
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """
@@ -100,50 +103,50 @@ class _AllocationLoader:
     #     result = acct_svc.get_cash_balance_with_children(root_account, self.currency)
     #     return result
 
-    def __parse_node(self, node):
-        """Creates an appropriate entity for the node. Recursive."""
-        entity = None
+    # def __parse_node(self, node):
+    #     """Creates an appropriate entity for the node. Recursive."""
+    #     entity = None
 
-        if "classes" in node:
-            # Asset Class Group
-            entity = AssetGroup(node)
-            child_allocation_sum = Decimal(0)
-            # Process child nodes
-            for child_node in node["classes"]:
-                # recursive call
-                child = self.__parse_node(child_node)
+    #     if "classes" in node:
+    #         # Asset Class Group
+    #         entity = AssetGroup(node)
+    #         child_allocation_sum = Decimal(0)
+    #         # Process child nodes
+    #         for child_node in node["classes"]:
+    #             # recursive call
+    #             child = self.__parse_node(child_node)
 
-                child.parent = entity
-                # log(DEBUG, "adding %s as parent to %s", entity.name, child.name)
-                entity.classes.append(child)
-                child_allocation_sum += child.allocation
+    #             child.parent = entity
+    #             # log(DEBUG, "adding %s as parent to %s", entity.name, child.name)
+    #             entity.classes.append(child)
+    #             child_allocation_sum += child.allocation
 
-            # compare allocation to the sum of child allocations
-            if entity.allocation != child_allocation_sum:
-                raise ValueError("allocation does not match (self/child)",
-                                 entity.allocation, child_allocation_sum)
+    #         # compare allocation to the sum of child allocations
+    #         if entity.allocation != child_allocation_sum:
+    #             raise ValueError("allocation does not match (self/child)",
+    #                              entity.allocation, child_allocation_sum)
 
-        if "stocks" in node:
-            # Asset Class
-            entity = AssetClass(node)
+    #     if "stocks" in node:
+    #         # Asset Class
+    #         entity = AssetClass(node)
 
-        # Cash
-        if node["name"] == "Cash":
-            # Cash node
-            entity = AssetClass(node)
-            entity.root_account = node["rootAccount"]
+    #     # Cash
+    #     if node["name"] == "Cash":
+    #         # Cash node
+    #         entity = AssetClass(node)
+    #         entity.root_account = node["rootAccount"]
 
-        # Threshold
-        if "threshold" in node:
-            threshold = node["threshold"].replace('%', '')
-            entity.threshold = Decimal(threshold)
+    #     # Threshold
+    #     if "threshold" in node:
+    #         threshold = node["threshold"].replace('%', '')
+    #         entity.threshold = Decimal(threshold)
 
-        # add asset class to index.
-        self.asset_class_index[entity.name] = entity
-        # log(DEBUG, "adding %s (%s) to asset class index", entity.name, entity.fullname)
-        # log(DEBUG, "%s", self.asset_class_index)
+    #     # add asset class to index.
+    #     self.asset_class_index[entity.name] = entity
+    #     # log(DEBUG, "adding %s (%s) to asset class index", entity.name, entity.fullname)
+    #     # log(DEBUG, "%s", self.asset_class_index)
 
-        return entity
+    #     return entity
 
     # def __load_asset_allocation_config_json(self):
     #     """
@@ -156,29 +159,29 @@ class _AllocationLoader:
     #         allocation_json = json.load(json_file)
     #     return allocation_json
 
-    def __calculate_percentages(self, asset_group: AssetGroup, total: Decimal):
-        """ calculate the allocation percentages """
-        if not hasattr(asset_group, "classes"):
-            return
+    # def __calculate_percentages(self, asset_group: AssetGroup, total: Decimal):
+    #     """ calculate the allocation percentages """
+    #     if not hasattr(asset_group, "classes"):
+    #         return
 
-        for child in asset_group.classes:
-            # calculate
-            # allocation is read from the config.
-            child.curr_alloc = child.curr_value * 100 / total
-            child.alloc_diff = child.curr_alloc - child.allocation
-            child.alloc_diff_perc = child.alloc_diff * 100 / child.allocation
+    #     for child in asset_group.classes:
+    #         # calculate
+    #         # allocation is read from the config.
+    #         child.curr_alloc = child.curr_value * 100 / total
+    #         child.alloc_diff = child.curr_alloc - child.allocation
+    #         child.alloc_diff_perc = child.alloc_diff * 100 / child.allocation
 
-            # Values
-            child.alloc_value = total * child.allocation / 100
-            # Value is calculated during load.
-            #child.curr_value = total * child.curr_alloc / 100
-            child.value_diff = child.curr_value - child.alloc_value
+    #         # Values
+    #         child.alloc_value = total * child.allocation / 100
+    #         # Value is calculated during load.
+    #         #child.curr_value = total * child.curr_alloc / 100
+    #         child.value_diff = child.curr_value - child.alloc_value
 
-            # Threshold
-            child.over_threshold = abs(child.alloc_diff_perc) > self.asset_allocation.threshold
+    #         # Threshold
+    #         child.over_threshold = abs(child.alloc_diff_perc) > self.asset_allocation.threshold
 
-            self.__calculate_percentages(child, total)
-        return
+    #         self.__calculate_percentages(child, total)
+    #     return
 
 
 class AssetAllocationAggregate():
@@ -189,7 +192,7 @@ class AssetAllocationAggregate():
     def __init__(self, config: Config):
         # book: Book
         self.book = None
-        self.root: AssetGroup = None
+        # self.root: AssetGroup = None
         # index for asset classes
         self.__asset_class_index = None
         # index for stocks
@@ -208,10 +211,10 @@ class AssetAllocationAggregate():
     #     self.__asset_class_index = loader.asset_class_index
     #     return config
 
-    def find_class_by_fullname(self, fullname: str):
-        """ Locates the asset class by fullname. i.e. Equity:International """
-        found = self.__get_by_fullname(self.root, fullname)
-        return found
+    # def find_class_by_fullname(self, fullname: str):
+    #     """ Locates the asset class by fullname. i.e. Equity:International """
+    #     found = self.__get_by_fullname(self.root, fullname)
+    #     return found
 
     def __get_by_fullname(self, asset_class, fullname: str):
         """ Recursive function """
@@ -228,12 +231,12 @@ class AssetAllocationAggregate():
 
         return None
 
-    def get_stock(self, symbol: str) -> List[Stock]:
-        """ Finds all the stock allocations by symbol """
-        # find this symbol
-        instances = [self.stock_index[symbol] for index_symbol in self.stock_index if index_symbol == symbol]
-        # log(DEBUG, "found %s instances for symbol %s", instances, symbol)
-        return instances
+    # def get_stock(self, symbol: str) -> List[Stock]:
+    #     """ Finds all the stock allocations by symbol """
+    #     # find this symbol
+    #     instances = [self.stock_index[symbol] for index_symbol in self.stock_index if index_symbol == symbol]
+    #     # log(DEBUG, "found %s instances for symbol %s", instances, symbol)
+    #     return instances
 
     @property
     def asset_class_index(self) -> List[AssetClass]:
@@ -242,30 +245,65 @@ class AssetAllocationAggregate():
             return self.__asset_class_index
         return self.__asset_class_index
 
-    @property
-    def stock_index(self):
-        """ Creates index of all stock symbols in allocation """
-        # iterate through allocation, get all the stocks, put them into index
-        if self.__stock_index:
-            return self.__stock_index
-        index = {}
+    # @property
+    # def stock_index(self):
+    #     """ Creates index of all stock symbols in allocation """
+    #     # iterate through allocation, get all the stocks, put them into index
+    #     if self.__stock_index:
+    #         return self.__stock_index
+    #     index = {}
 
-        # log(DEBUG, "starting with asset class index %s", self.asset_class_index)
-        # create asset class index first.
-        for name in self.asset_class_index:
-            asset_class = self.asset_class_index[name]
-            # log(DEBUG, "%s found in asset class index. Parent: %s",
-            #     asset_class.name, asset_class.parent)
+    #     # log(DEBUG, "starting with asset class index %s", self.asset_class_index)
+    #     # create asset class index first.
+    #     for name in self.asset_class_index:
+    #         asset_class = self.asset_class_index[name]
+    #         # log(DEBUG, "%s found in asset class index. Parent: %s",
+    #         #     asset_class.name, asset_class.parent)
 
-            if isinstance(asset_class, AssetGroup):
-                continue
-            # if not isinstance(asset_class, AssetClass):
-            for stock in asset_class.stocks:
-                symbol = stock.symbol
-                # populate
-                index[symbol] = stock
-                # log(DEBUG, "adding %s to stock index", symbol)
+    #         if isinstance(asset_class, AssetGroup):
+    #             continue
+    #         # if not isinstance(asset_class, AssetClass):
+    #         for stock in asset_class.stocks:
+    #             symbol = stock.symbol
+    #             # populate
+    #             index[symbol] = stock
+    #             # log(DEBUG, "adding %s to stock index", symbol)
 
-        # log(DEBUG, "stock index complete: %s", index)
-        self.__stock_index = index
-        return self.__stock_index
+    #     # log(DEBUG, "stock index complete: %s", index)
+    #     self.__stock_index = index
+    #     return self.__stock_index
+
+
+class AssetAllocationLoader:
+    """ The new allocation loader """
+    def __init__(self, config=None, session=None):
+        self.session = session
+        self.config = config
+
+    def read_tree_from_db(self) -> AssetAllocationModel:
+        """ Reads the asset allocation data and constructs the AA tree """
+        model = AssetAllocationModel()
+        # open database
+        db = self.__get_session()
+        # load level by level?
+        first_level = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == None).all()
+        
+        mapper = AssetClassMapper()
+        # create tree
+        for item in first_level:
+            ac = mapper.read_entity(item)
+            model.classes.append(ac)
+
+        return model
+
+    def __get_session(self):
+        """ Opens a db session """
+        db_path = self.__get_config().get(ConfigKeys.asset_allocation_database_path)
+        self.session = dal.get_session(db_path)
+        return self.session
+
+    def __get_config(self):
+        """ returns/creates a config object """
+        if not self.config:
+            self.config = Config()
+        return self.config
