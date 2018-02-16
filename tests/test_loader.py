@@ -15,7 +15,7 @@ def test_creation():
     assert actual != None
     assert isinstance(actual, AssetAllocationModel)
 
-def test_loading(config: Config):
+def test_loading_records(config: Config):
     """ Load test data from db """
     db_path = config.get(ConfigKeys.asset_allocation_database_path)
     full_path = path.abspath(db_path)

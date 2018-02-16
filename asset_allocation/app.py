@@ -4,6 +4,7 @@ Main entry point.
 """
 from .dal import AssetClass, AssetClassStock, get_session
 from .config import Config, ConfigKeys
+from .loader import AssetAllocationLoader
 
 
 class AppAggregate:
@@ -44,3 +45,12 @@ class AppAggregate:
     def save(self):
         """ Saves the entity """
         self.session.commit()
+
+    def get_asset_allocation_model():
+        """ Creates and populates the Asset Allocation model. The main function of the app. """
+        # TODO: load from db
+        loader = AssetAllocationLoader()
+        model = loader.read_tree_from_db()
+
+        # return the model for display
+        return model
