@@ -2,7 +2,8 @@
 from decimal import Decimal
 from typing import List
 from piecash import Book, Commodity
-from .models import AssetGroup, AssetClass, Stock
+from .model import AssetGroup, AssetClass, Stock
+from .config import Config
 
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """
@@ -13,91 +14,91 @@ class _AllocationLoader:
         # Asset Class index populated during load, for performance.
         self.asset_class_index = {}
 
-    def load_asset_allocation_model(self):
-        """ Loads Asset Allocation model for display """
-        self.asset_allocation = self.load_asset_allocation_config()
-        # Populate values from database.
-        self.__load_values_into(self.asset_allocation)
+    # def load_asset_allocation_model(self):
+    #     """ Loads Asset Allocation model for display """
+    #     self.asset_allocation = self.load_asset_allocation_config()
+    #     # Populate values from database.
+    #     self.__load_values_into(self.asset_allocation)
 
-        # calculate percentages
-        total_value = self.asset_allocation.curr_value
-        self.__calculate_percentages(self.asset_allocation, total_value)
+    #     # calculate percentages
+    #     total_value = self.asset_allocation.curr_value
+    #     self.__calculate_percentages(self.asset_allocation, total_value)
 
-        # Return model.
-        model = {
-            'allocation': self.asset_allocation,
-            'currency': self.currency.mnemonic
-        }
+    #     # Return model.
+    #     model = {
+    #         'allocation': self.asset_allocation,
+    #         'currency': self.currency.mnemonic
+    #     }
 
-        return model
+    #     return model
 
-    def load_asset_allocation_config(self) -> AssetGroup:
-        """ Loads only the configuration from json """
-                # read asset allocation file
-        root_node = self.__load_asset_allocation_config_json()
-        result = self.__parse_node(root_node)
-        return result
+    # def load_asset_allocation_config(self) -> AssetGroup:
+    #     """ Loads only the configuration from json """
+    #             # read asset allocation file
+    #     root_node = self.__load_asset_allocation_config_json()
+    #     result = self.__parse_node(root_node)
+    #     return result
 
-    def __load_values_into(self, asset_group: AssetGroup):
-        """
-        Populates the asset class values from the database.
-        Reads the stock values and fills the asset classes.
-        """
-        # iterate recursively until an Asset Class is found.
-        for child in asset_group.classes:
-            if isinstance(child, AssetGroup):
-                self.__load_values_into(child)
+    # def __load_values_into(self, asset_group: AssetGroup):
+    #     """
+    #     Populates the asset class values from the database.
+    #     Reads the stock values and fills the asset classes.
+    #     """
+    #     # iterate recursively until an Asset Class is found.
+    #     for child in asset_group.classes:
+    #         if isinstance(child, AssetGroup):
+    #             self.__load_values_into(child)
 
-            if isinstance(child, AssetClass):
-                # Add all the stock values.
-                svc = SecuritiesAggregate(self.book)
-                for stock in child.stocks:
-                    # then, for each stock, calculate value
-                    symbol = stock.symbol
-                    cdty = svc.get_stock(symbol)
-                    stock_svc = SecurityAggregate(self.book, cdty)
+    #         if isinstance(child, AssetClass):
+    #             # Add all the stock values.
+    #             svc = SecuritiesAggregate(self.book)
+    #             for stock in child.stocks:
+    #                 # then, for each stock, calculate value
+    #                 symbol = stock.symbol
+    #                 cdty = svc.get_stock(symbol)
+    #                 stock_svc = SecurityAggregate(self.book, cdty)
 
-                    # Quantity
-                    quantity = stock_svc.get_quantity()
-                    stock.quantity = quantity
+    #                 # Quantity
+    #                 quantity = stock_svc.get_quantity()
+    #                 stock.quantity = quantity
 
-                    # last price
-                    last_price: Price = stock_svc.get_last_available_price()
-                    stock.price = last_price.value
+    #                 # last price
+    #                 last_price: Price = stock_svc.get_last_available_price()
+    #                 stock.price = last_price.value
 
-                    # Value
-                    stock_value = last_price.value * quantity
-                    if last_price.currency != self.currency:
-                        # Recalculate into the base currency.
-                        stock_value = self.get_value_in_base_currency(
-                            stock_value, last_price.currency)
+    #                 # Value
+    #                 stock_value = last_price.value * quantity
+    #                 if last_price.currency != self.currency:
+    #                     # Recalculate into the base currency.
+    #                     stock_value = self.get_value_in_base_currency(
+    #                         stock_value, last_price.currency)
 
-                    child.curr_value += stock_value
+    #                 child.curr_value += stock_value
 
-            if child.name == "Cash":
-                # load cash balances
-                child.curr_value = self.get_cash_balance(child.root_account)
+    #         if child.name == "Cash":
+    #             # load cash balances
+    #             child.curr_value = self.get_cash_balance(child.root_account)
 
-            asset_group.curr_value += child.curr_value
+    #         asset_group.curr_value += child.curr_value
 
-    def get_value_in_base_currency(self, value: Decimal, currency: Commodity) -> Decimal:
-        """ Recalculates the given value into base currency """
-        base_cur = self.currency
+    # def get_value_in_base_currency(self, value: Decimal, currency: Commodity) -> Decimal:
+    #     """ Recalculates the given value into base currency """
+    #     base_cur = self.currency
 
-        svc = CurrencyAggregate(self.book, currency)
-        last_price = svc.get_latest_rate(base_cur)
+    #     svc = CurrencyAggregate(self.book, currency)
+    #     last_price = svc.get_latest_rate(base_cur)
 
-        result = value * last_price.value
+    #     result = value * last_price.value
 
-        return result
+    #     return result
 
-    def get_cash_balance(self, root_account_name: str) -> Decimal:
-        """ Loads investment cash balance in base currency """
-        svc = AccountsAggregate(self.book)
-        root_account = svc.get_by_fullname(root_account_name)
-        acct_svc = AccountAggregate(self.book, root_account)
-        result = acct_svc.get_cash_balance_with_children(root_account, self.currency)
-        return result
+    # def get_cash_balance(self, root_account_name: str) -> Decimal:
+    #     """ Loads investment cash balance in base currency """
+    #     svc = AccountsAggregate(self.book)
+    #     root_account = svc.get_by_fullname(root_account_name)
+    #     acct_svc = AccountAggregate(self.book, root_account)
+    #     result = acct_svc.get_cash_balance_with_children(root_account, self.currency)
+    #     return result
 
     def __parse_node(self, node):
         """Creates an appropriate entity for the node. Recursive."""
@@ -144,17 +145,16 @@ class _AllocationLoader:
 
         return entity
 
-    def __load_asset_allocation_config_json(self):
-        """
-        Loads asset allocation from the file.
-        Returns the list of asset classes.
-        """
-        allocation_file = path.abspath(path.join(
-            os.path.dirname(os.path.realpath(__file__)), "../config/assetAllocation.json"))
-        with open(allocation_file, 'r') as json_file:
-            allocation_json = json.load(json_file)
-
-        return allocation_json
+    # def __load_asset_allocation_config_json(self):
+    #     """
+    #     Loads asset allocation from the file.
+    #     Returns the list of asset classes.
+    #     """
+    #     allocation_file = path.abspath(path.join(
+    #         os.path.dirname(os.path.realpath(__file__)), "../config/assetAllocation.json"))
+    #     with open(allocation_file, 'r') as json_file:
+    #         allocation_json = json.load(json_file)
+    #     return allocation_json
 
     def __calculate_percentages(self, asset_group: AssetGroup, total: Decimal):
         """ calculate the allocation percentages """
@@ -182,27 +182,31 @@ class _AllocationLoader:
 
 
 class AssetAllocationAggregate():
-    """ The main service class """
-    def __init__(self, book: Book):
-        self.book = book
+    """
+    The main service class.
+    Opens a database connection when needed.
+    """
+    def __init__(self, config: Config):
+        # book: Book
+        self.book = None
         self.root: AssetGroup = None
         # index for asset classes
         self.__asset_class_index = None
         # index for stocks
         self.__stock_index: List[Stock] = None
 
-    def load_full_model(self, currency: Commodity):
-        """ Populates complete Asset Allocation tree """
-        loader = _AllocationLoader(currency, self.book)
-        return loader.load_asset_allocation_model()
+    # def load_full_model(self, currency: Commodity):
+    #     """ Populates complete Asset Allocation tree """
+    #     loader = _AllocationLoader(currency, self.book)
+    #     return loader.load_asset_allocation_model()
 
-    def load_config_only(self, currency: Commodity):
-        """ Loads only the asset allocation tree from configuration """
-        loader = _AllocationLoader(currency, self.book)
-        config = loader.load_asset_allocation_config()
-        # get the asset class index
-        self.__asset_class_index = loader.asset_class_index
-        return config
+    # def load_config_only(self, currency: Commodity):
+    #     """ Loads only the asset allocation tree from configuration """
+    #     loader = _AllocationLoader(currency, self.book)
+    #     config = loader.load_asset_allocation_config()
+    #     # get the asset class index
+    #     self.__asset_class_index = loader.asset_class_index
+    #     return config
 
     def find_class_by_fullname(self, fullname: str):
         """ Locates the asset class by fullname. i.e. Equity:International """

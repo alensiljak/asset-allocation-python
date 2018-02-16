@@ -1,5 +1,5 @@
-""" 
-Application Aggregate 
+"""
+Application Aggregate
 Main entry point.
 """
 #from . import dal

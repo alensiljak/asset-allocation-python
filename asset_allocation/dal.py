@@ -1,5 +1,5 @@
 """
-Data layer for Asset Allocation 
+Data layer for Asset Allocation
 Examples:
 - insert
     item = new AssetClass()
@@ -30,7 +30,7 @@ class AssetClass(Base):
     sortorder = Column(Integer)
     diff_adjustment = Column(Float(asdecimal=True))
 
-    stock_links = relationship('AssetClassStock', backref="assetclass", lazy='dynamic') 
+    stock_links = relationship('AssetClassStock', backref="assetclass", lazy='dynamic')
     #, cascade = "all,delete")
 
     def __repr__(self):

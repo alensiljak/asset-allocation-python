@@ -1,5 +1,5 @@
-""" 
-Configuration handling 
+"""
+Configuration handling
 The config file is stored in data directory and is located by using Resources.
 Ref: http://peak.telecommunity.com/DevCenter/setuptools#non-package-data-files
 """
