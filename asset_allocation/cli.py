@@ -21,7 +21,8 @@ def show(format):
     """ Print current allocation to the console. """
     # TODO load asset allocation
     app = AppAggregate()
-    #app.
+    model = app.get_asset_allocation_model()
+    print(model)
     print(f"This would print the Asset Allocation report in **{format}** format. Incomplete.")
 
 

@@ -46,7 +46,7 @@ class AppAggregate:
         """ Saves the entity """
         self.session.commit()
 
-    def get_asset_allocation_model():
+    def get_asset_allocation_model(self):
         """ Creates and populates the Asset Allocation model. The main function of the app. """
         # TODO: load from db
         loader = AssetAllocationLoader()
