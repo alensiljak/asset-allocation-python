@@ -87,7 +87,7 @@ def my_import(file):
     header = header.rstrip()
     # print(f"header: {header}")
 
-    # Parse
+    # Parse records from a csv row.
     counter = 0
     app = AppAggregate()
     app.open_session()

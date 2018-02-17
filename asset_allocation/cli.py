@@ -7,10 +7,12 @@ import click
 
 from asset_allocation import dal
 from asset_allocation.app import AppAggregate
-from asset_allocation.assetclass_cli import ac
 from asset_allocation.config import Config
-from asset_allocation.config_cli import config
 from asset_allocation.formatters import AsciiFormatter, HtmlFormatter
+# sub-commands
+from asset_allocation.assetclass_cli import ac
+from asset_allocation.config_cli import config
+from asset_allocation.stocklink_cli import sl
 
 
 @click.group()
@@ -40,6 +42,7 @@ def show(format, full):
 
 
 cli.add_command(ac)
+cli.add_command(sl)
 cli.add_command(show)
 cli.add_command(config)
 
