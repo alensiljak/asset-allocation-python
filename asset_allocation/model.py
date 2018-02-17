@@ -26,6 +26,7 @@ class _AssetBase:
         # reference to parent object
         self.parent: AssetClass = None
 
+        self.name = None
         # Set allocation %.
         self.allocation = Decimal(0)
         # if "allocation" in json_node:
@@ -50,18 +51,6 @@ class _AssetBase:
         self.threshold = Decimal(0)
         self.over_threshold = False
         self.under_threshold = False
-
-    @property
-    def name(self):
-        """Group name"""
-        pass
-        # if not self.data:
-        #     return ""
-
-        # if "name" in self.data:
-        #     return self.data["name"]
-        # else:
-        #     return ""
 
     @property
     def fullname(self):
@@ -98,6 +87,10 @@ class AssetClass(_AssetBase):
         #     stock = Stock(symbol)
         #     # todo add asset class allocation for this security.
         #     self.stocks.append(stock)
+
+    def __repr__(self):
+        return f"<AssetClass (name='{self.name}',allocation='{self.allocation:.2f}')>"
+        #,id='%s',allocation='%.2f',parent='%s')>" % (self.id, self.allocation, self.parentid)
 
 
 class Stock:

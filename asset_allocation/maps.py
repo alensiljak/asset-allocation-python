@@ -13,6 +13,8 @@ class AssetClassMapper():
         obj = model.AssetClass()
 
         obj.id = entity.id
+        obj.name = entity.name
+        obj.allocation = entity.allocation
 
         return obj
 

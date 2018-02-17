@@ -48,4 +48,5 @@ class TestSettings(object):
     @pytest.fixture(autouse=True, scope="session")
     def config(self):
         """ Real configuration """
+        print("config???")
         return self.__config

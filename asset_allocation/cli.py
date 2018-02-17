@@ -9,6 +9,7 @@ from asset_allocation import dal
 # from .loader import AssetAllocationAggregate
 from .config import Config
 from .app import AppAggregate
+from .formatters import AsciiFormatter
 
 @click.group()
 def cli():
@@ -22,7 +23,10 @@ def show(format):
     # TODO load asset allocation
     app = AppAggregate()
     model = app.get_asset_allocation_model()
-    print(model)
+
+    formatter = AsciiFormatter()
+    output = formatter.format(model)
+    print(output)
     print(f"This would print the Asset Allocation report in **{format}** format. Incomplete.")
 
 
