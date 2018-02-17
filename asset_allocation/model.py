@@ -24,6 +24,7 @@ class _AssetBase:
     """Base class for asset group & class"""
     def __init__(self):
         # reference to parent object
+        self.parent_id = None
         self.parent: AssetClass = None
 
         self.name = None
@@ -52,6 +53,12 @@ class _AssetBase:
         self.over_threshold = False
         self.under_threshold = False
 
+        # view-related
+        # Order of child classes within an asset class group.
+        self.sort_order = None
+        # Depth level within an asset class tree
+        self.depth = 0
+
     @property
     def fullname(self):
         """ includes the full path with parent names """
@@ -67,7 +74,7 @@ class _AssetBase:
 
 
 class AssetClass(_AssetBase):
-    """Asset Class contains stocks"""
+    """Asset Class contains stocks """
     def __init__(self):
         super().__init__()
 
