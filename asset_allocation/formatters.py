@@ -37,6 +37,12 @@ class AsciiFormatter:
         
         allocation = f"{ac.allocation:.2f}"
         output += f"{allocation:>5}"
+
+        # https://en.wikipedia.org/wiki/ANSI_escape_code
+        # CSI="\x1B["
+        # # red = 31, green = 32
+        # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
+        
         return output
 
 class HtmlFormatter:
