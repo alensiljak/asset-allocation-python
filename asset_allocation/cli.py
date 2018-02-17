@@ -20,8 +20,8 @@ def cli():
 @click.command()
 @click.option("--format", default="ascii", help="format for the report output. ascii or html.")
                 # prompt="output format")
-@click.argument("--full", is_flag=True, help="Display full model with securities")
-def show(format):
+@click.option("--full", is_flag=True, default=None, help="Display full model with securities")
+def show(format, full):
     """ Print current allocation to the console. """
     # load asset allocation
     app = AppAggregate()
@@ -43,5 +43,5 @@ cli.add_command(ac)
 cli.add_command(show)
 cli.add_command(config)
 
-if __name__ == '__main__':
-    show(["--format", "ascii"])
+# if __name__ == '__main__':
+#     show(["--format", "ascii"], ["--full", None])

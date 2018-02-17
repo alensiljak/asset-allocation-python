@@ -50,10 +50,11 @@ class AppAggregate:
         """ Creates and populates the Asset Allocation model. The main function of the app. """
         # load from db
         loader = AssetAllocationLoader()
-        model = loader.read_tree_from_db()
+        model = loader.load_tree_from_db()
 
         # securities
-        # TODO read stock links
+        # read stock links
+        loader.load_stock_links(model)
         # TODO read stock quantities from GnuCash
         # TODO read prices from Prices database
         # calculate.

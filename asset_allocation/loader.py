@@ -15,7 +15,7 @@ class AssetAllocationLoader:
         self.config = config
         self.mapper = None
 
-    def read_tree_from_db(self) -> AssetAllocationModel:
+    def load_tree_from_db(self) -> AssetAllocationModel:
         """ Reads the asset allocation data and constructs the AA tree """
         model = AssetAllocationModel()
 
@@ -31,11 +31,19 @@ class AssetAllocationLoader:
             ac = self.__map_entity(entity)
             model.classes.append(ac)
             # append children
-            self.load_children(ac)
+            self.__load_children(ac)
 
         return model
 
-    def load_children(self, ac: AssetClass):
+    def load_stock_links(self, model: AssetAllocationModel):
+        """ Read stock links into the model """
+        # recursive
+        # for ac in model.classes:
+        # OR load all links, and populate ac by ids.
+        links = self.__get_session().query(dal.AssetClassStock).all()
+        print(links)
+
+    def __load_children(self, ac: AssetClass):
         """ Loads child classes/stocks """
         # load child classes for ac
         db = self.__get_session()
@@ -47,7 +55,7 @@ class AssetAllocationLoader:
             child_ac.depth = ac.depth + 1
             ac.classes.append(child_ac)
 
-            self.load_children(child_ac)
+            self.__load_children(child_ac)
 
     def __map_entity(self, entity: dal.AssetClass) -> AssetClass:
         """ maps the entity onto the model object """
@@ -80,6 +88,9 @@ class AssetAllocationLoader:
         entity = db.query(dal.AssetClass).filter(dal.AssetClass.id == ac_id).first()
         return entity
 
+    def __load_stock_links(self, ac: AssetClass):
+        """ Load stock links for the given asset class """
+        pass
 
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """
