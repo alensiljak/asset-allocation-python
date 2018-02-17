@@ -8,6 +8,79 @@ from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
 
 
+class AssetAllocationLoader:
+    """ The new allocation loader """
+    def __init__(self, config=None, session=None):
+        self.session = session
+        self.config = config
+        self.mapper = None
+
+    def read_tree_from_db(self) -> AssetAllocationModel:
+        """ Reads the asset allocation data and constructs the AA tree """
+        model = AssetAllocationModel()
+
+        # currency
+        model.currency = self.__get_config().get(ConfigKeys.default_currency)
+
+        # Asset Classes
+        db = self.__get_session()
+        first_level = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == None).all()
+        
+        # create tree
+        for entity in first_level:
+            ac = self.__map_entity(entity)
+            model.classes.append(ac)
+            # append children
+            self.load_children(ac)
+
+        return model
+
+    def load_children(self, ac: AssetClass):
+        """ Loads child classes/stocks """
+        # load child classes for ac
+        db = self.__get_session()
+        entities = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == ac.id).all()
+        # map
+        for entity in entities:
+            child_ac = self.__map_entity(entity)
+            # depth
+            child_ac.depth = ac.depth + 1
+            ac.classes.append(child_ac)
+
+            self.load_children(child_ac)
+
+    def __map_entity(self, entity: dal.AssetClass) -> AssetClass:
+        """ maps the entity onto the model object """
+        mapper = self.__get_mapper()
+        ac = mapper.map_entity(entity)
+        return ac
+
+    def __get_mapper(self):
+        """ mapper instance """
+        if self.mapper == None:
+            self.mapper = AssetClassMapper()
+        return self.mapper
+
+    def __get_session(self):
+        """ Opens a db session """
+        db_path = self.__get_config().get(ConfigKeys.asset_allocation_database_path)
+        self.session = dal.get_session(db_path)
+        return self.session
+
+    def __get_config(self):
+        """ returns/creates a config object """
+        if not self.config:
+            self.config = Config()
+        return self.config
+
+    def __load_asset_class(self, ac_id: int):
+        """ Loads Asset Class entity """
+        # open database
+        db = self.__get_session()
+        entity = db.query(dal.AssetClass).filter(dal.AssetClass.id == ac_id).first()
+        return entity
+
+
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """
     def __init__(self, currency: Commodity, book: Book):
@@ -238,13 +311,6 @@ class AssetAllocationAggregate():
     #     # log(DEBUG, "found %s instances for symbol %s", instances, symbol)
     #     return instances
 
-    @property
-    def asset_class_index(self) -> List[AssetClass]:
-        """ Creates and returns an index of asset classes """
-        if self.__asset_class_index:
-            return self.__asset_class_index
-        return self.__asset_class_index
-
     # @property
     # def stock_index(self):
     #     """ Creates index of all stock symbols in allocation """
@@ -272,72 +338,3 @@ class AssetAllocationAggregate():
     #     # log(DEBUG, "stock index complete: %s", index)
     #     self.__stock_index = index
     #     return self.__stock_index
-
-
-class AssetAllocationLoader:
-    """ The new allocation loader """
-    def __init__(self, config=None, session=None):
-        self.session = session
-        self.config = config
-        self.mapper = None
-
-    def read_tree_from_db(self) -> AssetAllocationModel:
-        """ Reads the asset allocation data and constructs the AA tree """
-        model = AssetAllocationModel()
-        db = self.__get_session()
-        # load level by level?
-        first_level = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == None).all()
-        
-        # create tree
-        for entity in first_level:
-            ac = self.__map_entity(entity)
-            model.classes.append(ac)
-            # append children
-            self.load_children(ac)
-
-        return model
-
-    def load_children(self, ac: AssetClass):
-        """ Loads child classes/stocks """
-        # load child classes for ac
-        db = self.__get_session()
-        entities = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == ac.id).all()
-        # map
-        for entity in entities:
-            child_ac = self.__map_entity(entity)
-            # depth
-            child_ac.depth = ac.depth + 1
-            ac.classes.append(child_ac)
-
-            self.load_children(child_ac)
-
-    def __map_entity(self, entity: dal.AssetClass) -> AssetClass:
-        """ maps the entity onto the model object """
-        mapper = self.__get_mapper()
-        ac = mapper.map_entity(entity)
-        return ac
-
-    def __get_mapper(self):
-        """ mapper instance """
-        if self.mapper == None:
-            self.mapper = AssetClassMapper()
-        return self.mapper
-
-    def __get_session(self):
-        """ Opens a db session """
-        db_path = self.__get_config().get(ConfigKeys.asset_allocation_database_path)
-        self.session = dal.get_session(db_path)
-        return self.session
-
-    def __get_config(self):
-        """ returns/creates a config object """
-        if not self.config:
-            self.config = Config()
-        return self.config
-
-    def __load_asset_class(self, ac_id: int):
-        """ Loads Asset Class entity """
-        # open database
-        db = self.__get_session()
-        entity = db.query(dal.AssetClass).filter(dal.AssetClass.id == ac_id).first()
-        return entity

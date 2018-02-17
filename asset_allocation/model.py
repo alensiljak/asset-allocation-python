@@ -18,6 +18,7 @@ class AssetAllocationModel:
     """ The container class """
     def __init__(self):
         self.total_amount: Decimal = Decimal(0)
+        self.currency = None
         self.classes: List[AssetClass] = []
 
 class _AssetBase:

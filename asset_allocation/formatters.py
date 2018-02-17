@@ -6,15 +6,20 @@ from .model import AssetAllocationModel, AssetClass
 
 class AsciiFormatter:
     """ Formats the model for the console output """
-    # def __init__(self):
-    #     super.__init__(self)
+    def __init__(self):
+        self.columns = [("Asset Class", 25), ("allocation", 5)]
 
     def format(self, model: AssetAllocationModel):
         """ Returns the view-friendly output of the aa model """
-        output = "AA model\n"
-        output += "Total amount: " + str(model.total_amount) + "\n"
+        # Header
+        output = f"Asset Allocation model, total: {model.currency} {str(model.total_amount)}\n"
+        # Columns
+        width = self.columns[0][1]
+        output += f"{self.columns[0][0]:^{width}}"
+        output += f"{self.columns[1][0]:^{self.columns[1][1]}}"
+        output += "\n"
+
         # Asset classes
-        output += "Asset Allocation\n"
         for ac in model.classes:
             output += self.__get_ac_tree(ac)
         return output
@@ -33,7 +38,8 @@ class AsciiFormatter:
         for _ in range(0, ac.depth):
             output = f"    {output}"
         
-        output += f"{ac.name: <25}: "
+        width = self.columns[0][1]
+        output += f"{ac.name:<{width}}: "
         
         allocation = f"{ac.allocation:.2f}"
         output += f"{allocation:>5}"
