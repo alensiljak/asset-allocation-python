@@ -8,9 +8,12 @@ class AsciiFormatter:
     """ Formats the model for the console output """
     def __init__(self):
         self.columns = [("Asset Class", 25), ("allocation", 5)]
+        self.full = False
 
-    def format(self, model: AssetAllocationModel):
+    def format(self, model: AssetAllocationModel, full: bool=False):
         """ Returns the view-friendly output of the aa model """
+        self.full = full
+
         # Header
         output = f"Asset Allocation model, total: {model.currency} {str(model.total_amount)}\n"
         # Columns
@@ -27,8 +30,14 @@ class AsciiFormatter:
     def __get_ac_tree(self, ac: AssetClass):
         """ formats the ac tree - entity with child elements """
         output = self.__get_ac_row(ac) + "\n"
+
         for child in ac.classes:
             output += self.__get_ac_tree(child)
+        
+        if self.full:
+            for stock in ac.stocks:
+                output += str(stock)
+
         return output
 
     def __get_ac_row(self, ac: AssetClass):

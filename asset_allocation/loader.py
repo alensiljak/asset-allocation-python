@@ -1,11 +1,14 @@
 """ Asset Allocation loader """
 from decimal import Decimal
 from typing import List
+from logging import log, DEBUG
+
 from piecash import Book, Commodity
+
 from . import dal
-from .model import AssetClass, Stock, AssetAllocationModel
 from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
+from .model import AssetAllocationModel, AssetClass, Stock
 
 
 class AssetAllocationLoader:
@@ -30,8 +33,10 @@ class AssetAllocationLoader:
         for entity in first_level:
             ac = self.__map_entity(entity)
             model.classes.append(ac)
-            # append children
-            self.__load_children(ac)
+            # append child classes
+            self.__load_child_classes(ac)
+            # append stocks
+            self.__load_stock_links(ac)
 
         return model
 
@@ -40,10 +45,18 @@ class AssetAllocationLoader:
         # recursive
         # for ac in model.classes:
         # OR load all links, and populate ac by ids.
+        # List[dal.AssetClassStock]
         links = self.__get_session().query(dal.AssetClassStock).all()
-        print(links)
+        for entity in links:
+            log(DEBUG, f"adding {entity.symbol} to {entity.assetclassid}")
+            # mapping
+            stock = Stock(entity.symbol)
+            # find parent classes by id and assign children
+            parent: AssetClass = model.get_class_by_id(entity.assetclassid)
+            if parent:
+                parent.stocks.append(Stock)
 
-    def __load_children(self, ac: AssetClass):
+    def __load_child_classes(self, ac: AssetClass):
         """ Loads child classes/stocks """
         # load child classes for ac
         db = self.__get_session()
@@ -55,7 +68,7 @@ class AssetAllocationLoader:
             child_ac.depth = ac.depth + 1
             ac.classes.append(child_ac)
 
-            self.__load_children(child_ac)
+            self.__load_child_classes(child_ac)
 
     def __map_entity(self, entity: dal.AssetClass) -> AssetClass:
         """ maps the entity onto the model object """

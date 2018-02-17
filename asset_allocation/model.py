@@ -9,17 +9,10 @@ import os
 from os import path
 from logging import log, DEBUG
 from piecash import Book, Commodity, Price
-from gnucash_portfolio.accounts import AccountAggregate, AccountsAggregate
-from gnucash_portfolio.securities import SecurityAggregate, SecuritiesAggregate
-from gnucash_portfolio.currencies import CurrencyAggregate
+# from gnucash_portfolio.accounts import AccountAggregate, AccountsAggregate
+# from gnucash_portfolio.securities import SecurityAggregate, SecuritiesAggregate
+# from gnucash_portfolio.currencies import CurrencyAggregate
 
-
-class AssetAllocationModel:
-    """ The container class """
-    def __init__(self):
-        self.total_amount: Decimal = Decimal(0)
-        self.currency = None
-        self.classes: List[AssetClass] = []
 
 class _AssetBase:
     """Base class for asset group & class"""
@@ -127,4 +120,38 @@ class Stock:
         while cursor:
             result = cursor.name + ":" + result
             cursor = cursor.parent
+        return result
+
+
+class AssetAllocationModel:
+    """ The container class """
+    def __init__(self):
+        self.total_amount: Decimal = Decimal(0)
+        self.currency = None
+        self.classes: List[AssetClass] = []
+
+    def get_class_by_id(self, ac_id: int):
+        """ Finds the asset class by id """
+        assert isinstance(ac_id, int)
+
+        # iterate recursively
+        for ac in self.classes:
+            result = self.__find(ac, ac_id)
+            if result:
+                return result
+        # if nothing returned so far.
+        return None
+
+    def __find(self, root: AssetClass, ac_id: int):
+        """ recursive function, searching for ac by id starting from the root """
+        assert isinstance(root, AssetClass)
+        assert isinstance(ac_id, int)
+
+        result = None
+
+        if root.id == ac_id:
+            return root
+        # Search through children
+        for child in root.classes:
+            result = self.__find(child, ac_id)
         return result
