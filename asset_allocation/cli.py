@@ -34,7 +34,6 @@ def show(format):
         raise ValueError(f"Unknown formatter {format}")
     output = formatter.format(model)
     print(output)
-    print(f"This would print the Asset Allocation report in **{format}** format. Incomplete.")
 
 
 cli.add_command(ac)
