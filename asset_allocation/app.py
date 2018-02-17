@@ -48,9 +48,15 @@ class AppAggregate:
 
     def get_asset_allocation_model(self):
         """ Creates and populates the Asset Allocation model. The main function of the app. """
-        # TODO: load from db
+        # load from db
         loader = AssetAllocationLoader()
         model = loader.read_tree_from_db()
+
+        # securities
+        # TODO read stock links
+        # TODO read stock quantities from GnuCash
+        # TODO read prices from Prices database
+        # calculate.
 
         # return the model for display
         return model

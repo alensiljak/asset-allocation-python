@@ -20,11 +20,14 @@ def cli():
 @click.command()
 @click.option("--format", default="ascii", help="format for the report output. ascii or html.")
                 # prompt="output format")
+@click.argument("--full", is_flag=True, help="Display full model with securities")
 def show(format):
     """ Print current allocation to the console. """
     # load asset allocation
     app = AppAggregate()
     model = app.get_asset_allocation_model()
+
+    # TODO add option to formatters to display stock information
 
     if format == "ascii":
         formatter = AsciiFormatter()
