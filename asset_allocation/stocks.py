@@ -35,6 +35,8 @@ class StocksInfo:
         if not agg:
             raise ValueError(f"Security not found {symbol}!")
         price: Price = agg.get_last_available_price()
+        if not price:
+            raise ValueError(f"Price not found for {symbol}!")
         return price.value
 
     def get_gc_book(self):
