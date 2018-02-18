@@ -5,6 +5,7 @@ Main entry point.
 from .dal import AssetClass, AssetClassStock, get_session
 from .config import Config, ConfigKeys
 from .loader import AssetAllocationLoader
+from .model import AssetAllocationModel
 
 
 class AppAggregate:
@@ -61,3 +62,13 @@ class AppAggregate:
 
         # return the model for display
         return model
+
+    def validate_model(self):
+        """ Validate the model """
+        model: AssetAllocationModel = self.get_asset_allocation_model()
+        
+        valid = model.validate()
+        if valid:
+            print(f"The model is valid. Congratulations")
+        else:
+            print(f"The model is invalid.")

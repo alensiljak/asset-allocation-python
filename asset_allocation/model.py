@@ -146,6 +146,15 @@ class AssetAllocationModel:
         # if nothing returned so far.
         return None
 
+    def validate(self) -> bool:
+        """ Validate that the values match """
+        # TODO asset class allocation should match the sum of children's allocations
+        # Each group should be compared.
+        for ac in self.classes:
+            pass
+
+        return False
+
     def __find(self, root: AssetClass, ac_id: int):
         """ recursive function, searching for ac by id starting from the root """
         assert isinstance(root, AssetClass)
