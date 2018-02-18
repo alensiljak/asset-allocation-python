@@ -80,10 +80,16 @@ class AsciiFormatter:
         allocation = f"{stock.curr_alloc:.2f}"
         output += f"{allocation:>5}"
 
-        value = f"{stock.value:,.0f}"
+        # Value in base currency
+        value = f"{stock.value_in_base_currency:,.0f}"
+        output += f"{value:>8}"
+
+        # Value in security's currency.
+        value = f"({stock.value:,.0f}"
         output += f"{value:>8}"
 
         output += f" {stock.currency}"
+        output += ")"
 
         return output
 

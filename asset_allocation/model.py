@@ -79,6 +79,8 @@ class Stock:
         self.currency: str = None
         # Parent class
         self.parent: AssetClass = None
+        # Value in base currency. Calculated externally.
+        self.value_in_base_currency: Decimal = None
         # Current allocation
         self.curr_alloc: Decimal = Decimal(0)
 
@@ -172,8 +174,8 @@ class AssetAllocationModel:
             # add all the stocks
             stocks_sum = Decimal(0)
             for stock in asset_class.stocks:
-                # TODO recalculate into base currency!
-                stocks_sum += stock.value
+                # recalculate into base currency!
+                stocks_sum += stock.value_in_base_currency
 
             asset_class.curr_value = stocks_sum
 

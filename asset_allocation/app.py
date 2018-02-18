@@ -60,6 +60,8 @@ class AppAggregate:
         loader.load_stock_quantity()
         # read prices from Prices database
         loader.load_stock_prices()
+        # recalculate stock values into base currency
+        loader.recalculate_stock_values_into_base()
         # calculate
         model.calculate_totals()
 

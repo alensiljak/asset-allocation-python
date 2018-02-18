@@ -1,8 +1,9 @@
 """ Asset Allocation loader """
 from decimal import Decimal
+from logging import DEBUG, log
 from typing import List
-from logging import log, DEBUG
 
+from gnucash_portfolio.bookaggregate import BookAggregate
 from piecash import Book, Commodity
 
 from . import dal
@@ -73,6 +74,14 @@ class AssetAllocationLoader:
             stock.price = price
             stock.currency = currency
         info.gc_book.close()
+
+    def recalculate_stock_values_into_base(self):
+        """ Loads the exchange rates and recalculates stock holding values into 
+        base currency """
+        with BookAggregate() as svc:
+            for stock in self.model.stocks:
+                val_base = svc.currencies.get_amount_in_base_currency(stock.currency, stock.value)
+                stock.value_in_base_currency = val_base
 
     def __load_child_classes(self, ac: AssetClass):
         """ Loads child classes/stocks """
