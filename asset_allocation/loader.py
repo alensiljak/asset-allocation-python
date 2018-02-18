@@ -36,7 +36,7 @@ class AssetAllocationLoader:
             # append child classes
             self.__load_child_classes(ac)
             # append stocks
-            self.__load_stock_links(ac)
+            # self.__load_stock_links(ac)
 
         return model
 
@@ -104,6 +104,7 @@ class AssetAllocationLoader:
     def __load_stock_links(self, ac: AssetClass):
         """ Load stock links for the given asset class """
         pass
+
 
 class _AllocationLoader:
     """ Parses the allocation settings and loads the current allocation from database """

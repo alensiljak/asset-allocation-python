@@ -67,6 +67,38 @@ class _AssetBase:
         return prefix + self.name
 
 
+class Stock:
+    """Stock link"""
+    def __init__(self, symbol: str):
+        """Parse json node"""
+        self.symbol = symbol
+        # Quantity (number of shares)
+        self.quantity = Decimal(0)
+        # Price (last known)
+        self.price = Decimal(0)
+        # Parent class
+        self.parent = None
+
+    def __repr__(self):
+        return f"<Stock (symbol='{self.symbol}')>"
+
+    @property
+    def value(self) -> Decimal:
+        """Value of the shares. Value = Quantity * Price"""
+        return self.quantity * self.price
+
+    @property
+    def asset_class(self) -> str:
+        """ Returns the full asset class path for this stock """
+        result = self.parent.name if self.parent else ""
+        # Iterate to the top asset class and add names.
+        cursor = self.parent
+        while cursor:
+            result = cursor.name + ":" + result
+            cursor = cursor.parent
+        return result
+
+
 class AssetClass(_AssetBase):
     """Asset Class contains stocks """
     def __init__(self):
@@ -92,35 +124,6 @@ class AssetClass(_AssetBase):
     def __repr__(self):
         return f"<AssetClass (name='{self.name}',allocation='{self.allocation:.2f}')>"
         #,id='%s',allocation='%.2f',parent='%s')>" % (self.id, self.allocation, self.parentid)
-
-
-class Stock:
-    """Stock link"""
-    def __init__(self, symbol: str):
-        """Parse json node"""
-        self.symbol = symbol
-        # Quantity (number of shares)
-        self.quantity = Decimal(0)
-        # Price (last known)
-        self.price = Decimal(0)
-        # Parent class
-        self.parent = None
-
-    @property
-    def value(self) -> Decimal:
-        """Value of the shares. Value = Quantity * Price"""
-        return self.quantity * self.price
-
-    @property
-    def asset_class(self) -> str:
-        """ Returns the full asset class path for this stock """
-        result = self.parent.name if self.parent else ""
-        # Iterate to the top asset class and add names.
-        cursor = self.parent
-        while cursor:
-            result = cursor.name + ":" + result
-            cursor = cursor.parent
-        return result
 
 
 class AssetAllocationModel:
@@ -154,4 +157,6 @@ class AssetAllocationModel:
         # Search through children
         for child in root.classes:
             result = self.__find(child, ac_id)
+            if result:
+                break
         return result

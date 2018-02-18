@@ -36,7 +36,7 @@ class AsciiFormatter:
         
         if self.full:
             for stock in ac.stocks:
-                output += str(stock)
+                output += stock.symbol + str(stock) + "\n"
 
         return output
 
