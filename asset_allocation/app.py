@@ -56,8 +56,10 @@ class AppAggregate:
         # securities
         # read stock links
         loader.load_stock_links(model)
-        # TODO read stock quantities from GnuCash
-        # TODO read prices from Prices database
+        # read stock quantities from GnuCash
+        loader.load_stock_quantity(model)
+        # read prices from Prices database
+        loader.load_stock_prices(model)
         # calculate.
 
         # return the model for display

@@ -9,6 +9,7 @@ from . import dal
 from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
 from .model import AssetAllocationModel, AssetClass, Stock
+from .stocks import StocksInfo
 
 
 class AssetAllocationLoader:
@@ -19,7 +20,7 @@ class AssetAllocationLoader:
         self.mapper = None
 
     def load_tree_from_db(self) -> AssetAllocationModel:
-        """ Reads the asset allocation data and constructs the AA tree """
+        """ Reads the asset allocation data only, and constructs the AA tree """
         model = AssetAllocationModel()
 
         # currency
@@ -35,8 +36,6 @@ class AssetAllocationLoader:
             model.classes.append(ac)
             # append child classes
             self.__load_child_classes(ac)
-            # append stocks
-            # self.__load_stock_links(ac)
 
         return model
 
@@ -50,11 +49,29 @@ class AssetAllocationLoader:
         for entity in links:
             # log(DEBUG, f"adding {entity.symbol} to {entity.assetclassid}")
             # mapping
-            stock = Stock(entity.symbol)
+            stock: Stock = Stock(entity.symbol)
             # find parent classes by id and assign children
             parent: AssetClass = model.get_class_by_id(entity.assetclassid)
             if parent:
+                # Assign to parent.
                 parent.stocks.append(stock)
+                # Add to index for easy reference
+                model.stocks.append(stock)
+
+    def load_stock_quantity(self, model: AssetAllocationModel):
+        """ Loads quantities for all stocks """
+        info = StocksInfo(self.config)
+        for stock in model.stocks:
+            stock.quantity = info.get_stock_quantity(stock.symbol)
+        info.gc_book.close()
+
+    def load_stock_prices(self, model: AssetAllocationModel):
+        """ Load latest prices for securities """
+        info = StocksInfo(self.config)
+        for stock in model.stocks:
+            price = info.load_latest_price(stock.symbol)
+            stock.price = price
+        info.gc_book.close()
 
     def __load_child_classes(self, ac: AssetClass):
         """ Loads child classes/stocks """
@@ -100,10 +117,6 @@ class AssetAllocationLoader:
         db = self.__get_session()
         entity = db.query(dal.AssetClass).filter(dal.AssetClass.id == ac_id).first()
         return entity
-
-    def __load_stock_links(self, ac: AssetClass):
-        """ Load stock links for the given asset class """
-        pass
 
 
 class _AllocationLoader:

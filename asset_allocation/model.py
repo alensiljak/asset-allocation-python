@@ -70,22 +70,25 @@ class _AssetBase:
 class Stock:
     """Stock link"""
     def __init__(self, symbol: str):
-        self.symbol = symbol
+        self.symbol: str = symbol
         # Quantity (number of shares)
-        self.quantity = Decimal(0)
+        self.quantity: Decimal = Decimal(0)
         # Price (last known)
-        self.price = Decimal(0)
+        self.price: Decimal = Decimal(0)
         # Parent class
-        self.parent = None
+        self.parent: AssetClass = None
         # Current allocation
-        self.curr_alloc = Decimal(0)
+        self.curr_alloc: Decimal = Decimal(0)
 
     def __repr__(self):
-        return f"<Stock (symbol='{self.symbol}')>"
+        return f"<Stock (symbol='{self.symbol}',quantity={self.quantity},value={self.value})>"
 
     @property
     def value(self) -> Decimal:
-        """Value of the shares. Value = Quantity * Price"""
+        """
+        Value of the holdings in exchange currency.
+        Value = Quantity * Price
+        """
         return self.quantity * self.price
 
     @property
@@ -132,7 +135,10 @@ class AssetAllocationModel:
     def __init__(self):
         self.total_amount: Decimal = Decimal(0)
         self.currency = None
+        # Child classes, the first-level only. This is the beginning of the tree.
         self.classes: List[AssetClass] = []
+        # Index of all Stocks
+        self.stocks: List[Stock] = []
 
     def get_class_by_id(self, ac_id: int):
         """ Finds the asset class by id """
