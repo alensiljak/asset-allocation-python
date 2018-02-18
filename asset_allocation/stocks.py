@@ -19,12 +19,10 @@ class StocksInfo:
 
         collection = SecuritiesAggregate(book)
         sec = collection.get_aggregate_for_symbol(symbol)
-        # TODO use the aa currency
-        #value = sec.get_value()
         quantity = sec.get_quantity()
         return quantity
 
-    def load_latest_price(self, symbol:str) -> Decimal:
+    def load_latest_price(self, symbol: str) -> Decimal:
         """ Loads the latest price for security """
         # For now, use GnuCash book. 
         # TODO use a separate price database that can be updated on Android

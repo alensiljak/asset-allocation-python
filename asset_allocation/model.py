@@ -137,6 +137,9 @@ class AssetAllocationModel:
         self.currency = None
         # Child classes, the first-level only. This is the beginning of the tree.
         self.classes: List[AssetClass] = []
+        
+        # Index of all asset classes. Linear representation.
+        self.asset_classes: List[AssetClass] = []
         # Index of all Stocks
         self.stocks: List[Stock] = []
 
@@ -145,10 +148,9 @@ class AssetAllocationModel:
         assert isinstance(ac_id, int)
 
         # iterate recursively
-        for ac in self.classes:
-            result = self.__find(ac, ac_id)
-            if result:
-                return result
+        for ac in self.asset_classes:
+            if ac.id == ac_id:
+                return ac
         # if nothing returned so far.
         return None
 
@@ -160,19 +162,3 @@ class AssetAllocationModel:
             pass
 
         return False
-
-    def __find(self, root: AssetClass, ac_id: int):
-        """ recursive function, searching for ac by id starting from the root """
-        assert isinstance(root, AssetClass)
-        assert isinstance(ac_id, int)
-
-        result = None
-
-        if root.id == ac_id:
-            return root
-        # Search through children
-        for child in root.classes:
-            result = self.__find(child, ac_id)
-            if result:
-                break
-        return result

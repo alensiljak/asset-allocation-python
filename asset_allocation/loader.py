@@ -18,13 +18,14 @@ class AssetAllocationLoader:
         self.session = session
         self.config = config
         self.mapper = None
+        self.model: AssetAllocationModel = None
 
     def load_tree_from_db(self) -> AssetAllocationModel:
         """ Reads the asset allocation data only, and constructs the AA tree """
-        model = AssetAllocationModel()
+        self.model = AssetAllocationModel()
 
         # currency
-        model.currency = self.__get_config().get(ConfigKeys.default_currency)
+        self.model.currency = self.__get_config().get(ConfigKeys.default_currency)
 
         # Asset Classes
         db = self.__get_session()
@@ -33,42 +34,41 @@ class AssetAllocationLoader:
         # create tree
         for entity in first_level:
             ac = self.__map_entity(entity)
-            model.classes.append(ac)
-            # append child classes
+            self.model.classes.append(ac)
+            # Add to index
+            self.model.asset_classes.append(ac)
+            
+            # append child classes recursively
             self.__load_child_classes(ac)
 
-        return model
+        return self.model
 
-    def load_stock_links(self, model: AssetAllocationModel):
+    def load_stock_links(self):
         """ Read stock links into the model """
-        # recursive
-        # for ac in model.classes:
-        # OR load all links, and populate ac by ids.
-        # List[dal.AssetClassStock]
         links = self.__get_session().query(dal.AssetClassStock).all()
         for entity in links:
             # log(DEBUG, f"adding {entity.symbol} to {entity.assetclassid}")
             # mapping
             stock: Stock = Stock(entity.symbol)
             # find parent classes by id and assign children
-            parent: AssetClass = model.get_class_by_id(entity.assetclassid)
+            parent: AssetClass = self.model.get_class_by_id(entity.assetclassid)
             if parent:
                 # Assign to parent.
                 parent.stocks.append(stock)
                 # Add to index for easy reference
-                model.stocks.append(stock)
+                self.model.stocks.append(stock)
 
-    def load_stock_quantity(self, model: AssetAllocationModel):
+    def load_stock_quantity(self):
         """ Loads quantities for all stocks """
         info = StocksInfo(self.config)
-        for stock in model.stocks:
+        for stock in self.model.stocks:
             stock.quantity = info.get_stock_quantity(stock.symbol)
         info.gc_book.close()
 
-    def load_stock_prices(self, model: AssetAllocationModel):
+    def load_stock_prices(self):
         """ Load latest prices for securities """
         info = StocksInfo(self.config)
-        for stock in model.stocks:
+        for stock in self.model.stocks:
             price = info.load_latest_price(stock.symbol)
             stock.price = price
         info.gc_book.close()
@@ -84,6 +84,8 @@ class AssetAllocationLoader:
             # depth
             child_ac.depth = ac.depth + 1
             ac.classes.append(child_ac)
+            # Add to index
+            self.model.asset_classes.append(child_ac)
 
             self.__load_child_classes(child_ac)
 
