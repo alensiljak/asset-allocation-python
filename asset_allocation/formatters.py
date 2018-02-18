@@ -8,7 +8,7 @@ class AsciiFormatter:
     """ Formats the model for the console output """
     def __init__(self):
         self.columns = [ 
-            { "name": "Asset Class", "width": 25 }, 
+            { "name": "Asset Class", "width": 20 }, 
             { "name": "allocation", "width": 5 },
             { "name": "value", "width": 10 }
         ]
