@@ -13,7 +13,7 @@ class StocksInfo:
         self.gc_book: Book = None
         # Prices session. For now, using GC for prices db.
 
-    def get_stock_quantity(self, symbol: str) -> Decimal(0):
+    def load_stock_quantity(self, symbol: str) -> Decimal(0):
         """ retrieves stock quantity """
         book = self.get_gc_book()
 

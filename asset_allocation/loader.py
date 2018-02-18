@@ -62,7 +62,7 @@ class AssetAllocationLoader:
         """ Loads quantities for all stocks """
         info = StocksInfo(self.config)
         for stock in self.model.stocks:
-            stock.quantity = info.get_stock_quantity(stock.symbol)
+            stock.quantity = info.load_stock_quantity(stock.symbol)
         info.gc_book.close()
 
     def load_stock_prices(self):
