@@ -48,13 +48,13 @@ class AssetAllocationLoader:
         # List[dal.AssetClassStock]
         links = self.__get_session().query(dal.AssetClassStock).all()
         for entity in links:
-            log(DEBUG, f"adding {entity.symbol} to {entity.assetclassid}")
+            # log(DEBUG, f"adding {entity.symbol} to {entity.assetclassid}")
             # mapping
             stock = Stock(entity.symbol)
             # find parent classes by id and assign children
             parent: AssetClass = model.get_class_by_id(entity.assetclassid)
             if parent:
-                parent.stocks.append(Stock)
+                parent.stocks.append(stock)
 
     def __load_child_classes(self, ac: AssetClass):
         """ Loads child classes/stocks """

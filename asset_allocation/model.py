@@ -8,7 +8,7 @@ except ImportError: import json
 import os
 from os import path
 from logging import log, DEBUG
-from piecash import Book, Commodity, Price
+# from piecash import Book, Commodity, Price
 # from gnucash_portfolio.accounts import AccountAggregate, AccountsAggregate
 # from gnucash_portfolio.securities import SecurityAggregate, SecuritiesAggregate
 # from gnucash_portfolio.currencies import CurrencyAggregate
@@ -70,7 +70,6 @@ class _AssetBase:
 class Stock:
     """Stock link"""
     def __init__(self, symbol: str):
-        """Parse json node"""
         self.symbol = symbol
         # Quantity (number of shares)
         self.quantity = Decimal(0)
@@ -78,6 +77,8 @@ class Stock:
         self.price = Decimal(0)
         # Parent class
         self.parent = None
+        # Current allocation
+        self.curr_alloc = Decimal(0)
 
     def __repr__(self):
         return f"<Stock (symbol='{self.symbol}')>"

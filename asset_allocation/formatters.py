@@ -1,13 +1,16 @@
 """
 Output formatters for the AA model
 """
-from .model import AssetAllocationModel, AssetClass
+from .model import AssetAllocationModel, AssetClass, Stock
 
 
 class AsciiFormatter:
     """ Formats the model for the console output """
     def __init__(self):
-        self.columns = [("Asset Class", 25), ("allocation", 5)]
+        self.columns = [ 
+            { "name": "Asset Class", "width": 25 }, 
+            { "name": "allocation", "width": 5 }
+        ]
         self.full = False
 
     def format(self, model: AssetAllocationModel, full: bool=False):
@@ -17,9 +20,9 @@ class AsciiFormatter:
         # Header
         output = f"Asset Allocation model, total: {model.currency} {str(model.total_amount)}\n"
         # Columns
-        width = self.columns[0][1]
-        output += f"{self.columns[0][0]:^{width}}"
-        output += f"{self.columns[1][0]:^{self.columns[1][1]}}"
+        width = self.columns[0]["width"]
+        output += f"{self.columns[0]['name']:^{width}}"
+        output += f"{self.columns[1]['name']:^{self.columns[1]['width']}}"
         output += "\n"
 
         # Asset classes
@@ -36,7 +39,7 @@ class AsciiFormatter:
         
         if self.full:
             for stock in ac.stocks:
-                output += stock.symbol + str(stock) + "\n"
+                output += self.__get_stock_row(stock, ac.depth + 1) + "\n"
 
         return output
 
@@ -47,7 +50,7 @@ class AsciiFormatter:
         for _ in range(0, ac.depth):
             output = f"    {output}"
         
-        width = self.columns[0][1]
+        width = self.columns[0]["width"]
         output += f"{ac.name:<{width}}: "
         
         allocation = f"{ac.allocation:.2f}"
@@ -59,6 +62,21 @@ class AsciiFormatter:
         # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
         
         return output
+
+    def __get_stock_row(self, stock: Stock, depth: int) -> str:
+        """ formats stock row """
+        output = ""
+        for _ in range(0, depth):
+            output += "    "
+        width = self.columns[0]["width"]
+        output += f"{stock.symbol:<{width}}: "
+
+        #stock.
+        allocation = f"{stock.curr_alloc:.2f}"
+        output += f"{allocation:>5}"
+
+        return output
+
 
 class HtmlFormatter:
     """ Formats HTML output """
