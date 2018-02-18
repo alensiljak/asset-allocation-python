@@ -75,6 +75,8 @@ class Stock:
         self.quantity: Decimal = Decimal(0)
         # Price (last known)
         self.price: Decimal = Decimal(0)
+        # Currency symbol for the price
+        self.currency: str = None
         # Parent class
         self.parent: AssetClass = None
         # Current allocation

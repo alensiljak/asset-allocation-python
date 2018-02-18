@@ -69,8 +69,9 @@ class AssetAllocationLoader:
         """ Load latest prices for securities """
         info = StocksInfo(self.config)
         for stock in self.model.stocks:
-            price = info.load_latest_price(stock.symbol)
+            (price, currency) = info.load_latest_price(stock.symbol)
             stock.price = price
+            stock.currency = currency
         info.gc_book.close()
 
     def __load_child_classes(self, ac: AssetClass):

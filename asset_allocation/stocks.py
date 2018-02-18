@@ -22,7 +22,7 @@ class StocksInfo:
         quantity = sec.get_quantity()
         return quantity
 
-    def load_latest_price(self, symbol: str) -> Decimal:
+    def load_latest_price(self, symbol: str) -> (Decimal, str):
         """ Loads the latest price for security """
         # For now, use GnuCash book. 
         # TODO use a separate price database that can be updated on Android
@@ -35,7 +35,7 @@ class StocksInfo:
         price: Price = agg.get_last_available_price()
         if not price:
             raise ValueError(f"Price not found for {symbol}!")
-        return price.value
+        return (price.value, price.currency.mnemonic)
 
     def get_gc_book(self):
         """ Returns the GnuCash db session """

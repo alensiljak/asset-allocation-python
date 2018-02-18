@@ -83,6 +83,8 @@ class AsciiFormatter:
         value = f"{stock.value:,.0f}"
         output += f"{value:>8}"
 
+        output += f" {stock.currency}"
+
         return output
 
 
