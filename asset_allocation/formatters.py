@@ -75,6 +75,9 @@ class AsciiFormatter:
         allocation = f"{stock.curr_alloc:.2f}"
         output += f"{allocation:>5}"
 
+        value = f"{stock.value:.0f}"
+        output += f"{value:>8}"
+
         return output
 
 
