@@ -147,7 +147,7 @@ class AssetAllocationModel:
         return None
 
     def validate(self) -> bool:
-        """ Validate that the values match """
+        """ Validate that the values match. Incomplete! """
         # TODO asset class allocation should match the sum of children's allocations
         # Each group should be compared.
         for ac in self.classes:

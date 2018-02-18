@@ -14,10 +14,12 @@ from pkg_resources import Requirement, resource_filename
 
 config_filename = "asset_allocation.ini"
 #config_filename = "data/asset_allocation.ini"
+SECTION = "Default"
 
 
 class ConfigKeys(Enum):
     asset_allocation_database_path = auto(),
+    gnucash_book_path = auto(),
     price_database_path = auto(),
     default_currency = auto()
 
@@ -110,7 +112,7 @@ class Config:
         assert isinstance(option, ConfigKeys)
 
         # As currently we only have 1 section. 
-        section = "Databases"
+        section = SECTION
         self.config.set(section, option.name, value)
         self.save()
     
@@ -119,7 +121,7 @@ class Config:
         assert isinstance(option, ConfigKeys)
 
         # Currently only one section is used
-        section = "Databases"
+        section = SECTION
         return self.config.get(section, option.name)
 
     def save(self):

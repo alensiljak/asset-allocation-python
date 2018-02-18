@@ -10,7 +10,7 @@ from asset_allocation.model import AssetAllocationModel
 def test_creation():
     """ Load correct types and something returned """
     x = AssetAllocationLoader()
-    actual = x.read_tree_from_db()
+    actual = x.load_tree_from_db()
 
     assert actual != None
     assert isinstance(actual, AssetAllocationModel)
@@ -23,6 +23,6 @@ def test_loading_records(config: Config):
 
     x: AssetAllocationLoader = AssetAllocationLoader(config=config)
     # log(DEBUG, f"using configuration: {x.config}")
-    actual = x.read_tree_from_db()
+    actual = x.load_tree_from_db()
 
     assert len(actual.classes) == 2
