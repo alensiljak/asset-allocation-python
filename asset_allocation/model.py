@@ -116,18 +116,9 @@ class AssetClass(_AssetBase):
         # It can contain only other classes OR stocks, not both at the same time!
         self.classes = []
         self.stocks: List[Stock] = []
-        # parse stocks
-        # if "stocks" not in json_node:
-        #     return
-
-        # for symbol in json_node["stocks"]:
-        #     stock = Stock(symbol)
-        #     # todo add asset class allocation for this security.
-        #     self.stocks.append(stock)
 
     def __repr__(self):
         return f"<AssetClass (name='{self.name}',allocation='{self.allocation:.2f}')>"
-        #,id='%s',allocation='%.2f',parent='%s')>" % (self.id, self.allocation, self.parentid)
 
 
 class AssetAllocationModel:
@@ -162,3 +153,30 @@ class AssetAllocationModel:
             pass
 
         return False
+
+    def calculate_totals(self):
+        """ Add all the stock values and assign to the asset classes """
+        # must be recursive
+        total = Decimal(0)
+        for ac in self.classes:
+            self.__calculate_total(ac)
+            total += ac.curr_value
+        self.total_amount = total
+
+    def __calculate_total(self, asset_class: AssetClass):
+        """ Calculate totals for asset class by adding all the children values """
+        # Is this the final asset class, the one with stocks?
+        if asset_class.stocks:
+            # add all the stocks
+            stocks_sum = Decimal(0)
+            for stock in asset_class.stocks:
+                # TODO recalculate into base currency!
+                stocks_sum += stock.value
+
+            asset_class.curr_value = stocks_sum
+
+        if asset_class.classes:
+            # load totals for child classes
+            for child in asset_class.classes:
+                self.__calculate_total(child)
+                asset_class.curr_value += child.curr_value

@@ -60,7 +60,8 @@ class AppAggregate:
         loader.load_stock_quantity()
         # read prices from Prices database
         loader.load_stock_prices()
-        # calculate.
+        # calculate
+        model.calculate_totals()
 
         # return the model for display
         return model

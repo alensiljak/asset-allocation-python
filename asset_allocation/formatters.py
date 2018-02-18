@@ -9,7 +9,8 @@ class AsciiFormatter:
     def __init__(self):
         self.columns = [ 
             { "name": "Asset Class", "width": 25 }, 
-            { "name": "allocation", "width": 5 }
+            { "name": "allocation", "width": 5 },
+            { "name": "value", "width": 10 }
         ]
         self.full = False
 
@@ -18,11 +19,11 @@ class AsciiFormatter:
         self.full = full
 
         # Header
-        output = f"Asset Allocation model, total: {model.currency} {str(model.total_amount)}\n"
+        output = f"Asset Allocation model, total: {model.currency} {model.total_amount:,.2f}\n"
         # Columns
-        width = self.columns[0]["width"]
-        output += f"{self.columns[0]['name']:^{width}}"
-        output += f"{self.columns[1]['name']:^{self.columns[1]['width']}}"
+        for column in self.columns:
+            width = column["width"]
+            output += f"{column['name']:^{width}}"
         output += "\n"
 
         # Asset classes
@@ -55,6 +56,10 @@ class AsciiFormatter:
         
         allocation = f"{ac.allocation:.2f}"
         output += f"{allocation:>5}"
+
+        # value
+        value = f"{ac.curr_value:,.0f}"
+        output += f"{value:>10}"
 
         # https://en.wikipedia.org/wiki/ANSI_escape_code
         # CSI="\x1B["
