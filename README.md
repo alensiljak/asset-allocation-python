@@ -2,6 +2,7 @@ ToC:
 - [Asset-Allocation](#asset-allocation)
     - [Introduction](#introduction)
 - [Development](#development)
+    - [Configuration](#configuration)
     - [Data Store](#data-store)
 - [Tests](#tests)
 
@@ -22,6 +23,9 @@ Dependencies will include:
 
 Requirements are generated with _pipreqs_. Install requirements from requirements.txt.
 
+## Configuration
+
+On the first run, a config file will be created in the user's directory, based on the template in project's data directory.
 
 ## Data Store
 
