@@ -1,8 +1,10 @@
 """ Operations on Stocks in GC book """
 from decimal import Decimal
 from logging import log, DEBUG
-from piecash import Book, open_book, Price
+from piecash import Book, open_book
+import piecash
 from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
+from pricedb.model import Price
 
 from .config import Config, ConfigKeys
 
@@ -22,20 +24,11 @@ class StocksInfo:
         quantity = sec.get_quantity()
         return quantity
 
-    def load_latest_price(self, symbol: str) -> (Decimal, str):
+    def load_latest_price(self, symbol: str) -> Price:
         """ Loads the latest price for security """
-        # For now, use GnuCash book. 
-        # TODO use a separate price database that can be updated on Android
-        book = self.get_gc_book()
-        
-        svc = SecuritiesAggregate(book)
-        agg = svc.get_aggregate_for_symbol(symbol)
-        if not agg:
-            raise ValueError(f"Security not found {symbol}!")
-        price: Price = agg.get_last_available_price()
-        if not price:
-            raise ValueError(f"Price not found for {symbol}!")
-        return (price.value, price.currency.mnemonic)
+        # result = self.__load_latest_prices_from_gnucash(symbol)
+        result = self.__load_latest_prices_from_pricedb(symbol)
+        return result
 
     def get_gc_book(self):
         """ Returns the GnuCash db session """
@@ -45,3 +38,42 @@ class StocksInfo:
                 raise AttributeError("GnuCash book path not configured.")
             self.gc_book = open_book(gc_db)
         return self.gc_book
+    
+    def __load_latest_prices_from_gnucash(self, symbol):
+        """ Load security prices from GnuCash book. Deprecated. """
+        book = self.get_gc_book()
+        
+        svc = SecuritiesAggregate(book)
+        agg = svc.get_aggregate_for_symbol(symbol)
+        if not agg:
+            raise ValueError(f"Security not found {symbol}!")
+        price: piecash.Price = agg.get_last_available_price()
+        if not price:
+            raise ValueError(f"Price not found for {symbol}!")
+        
+        # Map to price model.
+        result = Price()
+        result.value = price.value
+        result.currency = price.currency.mnemonic
+        return result
+
+    def __load_latest_prices_from_pricedb(self, symbol: str) -> Price:
+        """
+        Load security prices from PriceDb.
+        Uses a separate price database that can be updated on (or from) Android.
+        """
+        from pricedb import dal, app
+        # from pricedb.model import Price
+
+        namespace = None
+        mnemonic = symbol
+        symbol_parts = symbol.split()
+        if len(symbol_parts) > 1:
+            namespace = symbol_parts[0]
+            mnemonic = symbol_parts[1]
+
+        session = dal.get_default_session()
+        pricedb = app.PriceDbApplication()
+        latest_price = pricedb.get_latest_price(namespace, mnemonic)
+
+        return latest_price

@@ -11,6 +11,7 @@ from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
 from .model import AssetAllocationModel, AssetClass, Stock
 from .stocks import StocksInfo
+from pricedb.model import Price
 
 
 class AssetAllocationLoader:
@@ -70,10 +71,13 @@ class AssetAllocationLoader:
         """ Load latest prices for securities """
         info = StocksInfo(self.config)
         for stock in self.model.stocks:
-            (price, currency) = info.load_latest_price(stock.symbol)
-            stock.price = price
-            stock.currency = currency
-        info.gc_book.close()
+            price: Price = info.load_latest_price(stock.symbol)
+            if not price:
+                price = Price()
+                price.currency = self.config.get(ConfigKeys.default_currency)
+            stock.price = price.value
+            stock.currency = price.currency
+        # info.gc_book.close()
 
     def recalculate_stock_values_into_base(self):
         """ Loads the exchange rates and recalculates stock holding values into 
