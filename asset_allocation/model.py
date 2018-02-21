@@ -140,7 +140,7 @@ class AssetAllocationModel:
         # Index of all Stocks
         self.stocks: List[Stock] = []
 
-    def get_class_by_id(self, ac_id: int):
+    def get_class_by_id(self, ac_id: int) -> AssetClass:
         """ Finds the asset class by id """
         assert isinstance(ac_id, int)
 
@@ -149,6 +149,13 @@ class AssetAllocationModel:
             if ac.id == ac_id:
                 return ac
         # if nothing returned so far.
+        return None
+
+    def get_cash_asset_class(self) -> AssetClass:
+        """ Find the cash asset class by name. """
+        for ac in self.asset_classes:
+            if ac.name.lower() == "cash":
+                return ac
         return None
 
     def validate(self) -> bool:

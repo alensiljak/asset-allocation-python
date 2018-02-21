@@ -41,9 +41,9 @@ class AssetAllocationLoader:
             acct_svc = AccountAggregate(book, root_account)
             cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
         
-        # TODO assign to cash asset class.
-        #self.model.get_class_by_id
-        print(cash_balance)
+        # assign to cash asset class.
+        cash = self.model.get_cash_asset_class()
+        cash.curr_value = cash_balance
 
     def load_tree_from_db(self) -> AssetAllocationModel:
         """ Reads the asset allocation data only, and constructs the AA tree """
