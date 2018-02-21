@@ -93,6 +93,8 @@ class Stock:
         Value of the holdings in exchange currency.
         Value = Quantity * Price
         """
+        assert isinstance(self.price, Decimal)
+        
         return self.quantity * self.price
 
     @property

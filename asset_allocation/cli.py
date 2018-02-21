@@ -4,7 +4,6 @@ Main entry point to the library
 import sys
 
 import click
-# from click.testing import CliRunner
 
 from asset_allocation import dal
 from asset_allocation.app import AppAggregate
@@ -56,5 +55,5 @@ cli.add_command(validate)
 
 ##############################
 # For debugging.
-# if __name__ == '__main__':
-#     show(["--format", "ascii", "--full"])
+if __name__ == '__main__':
+    show(["--format", "ascii", "--full"])

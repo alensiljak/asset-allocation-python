@@ -67,13 +67,14 @@ class StocksInfo:
 
         namespace = None
         mnemonic = symbol
-        symbol_parts = symbol.split()
+        symbol_parts = symbol.split(":")
         if len(symbol_parts) > 1:
             namespace = symbol_parts[0]
             mnemonic = symbol_parts[1]
 
         session = dal.get_default_session()
         pricedb = app.PriceDbApplication()
+        app.session = session
         latest_price = pricedb.get_latest_price(namespace, mnemonic)
 
         return latest_price
