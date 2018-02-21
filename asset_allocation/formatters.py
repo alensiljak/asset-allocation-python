@@ -25,7 +25,7 @@ class AsciiFormatter:
             width = column["width"]
             output += f"{column['name']:^{width}}"
         output += "\n"
-        output = f"---------------------------------------------------------------\n"
+        output += f"---------------------------------------------------------------\n"
 
         # Asset classes
         for ac in model.classes:
