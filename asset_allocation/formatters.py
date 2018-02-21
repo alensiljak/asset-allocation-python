@@ -9,7 +9,7 @@ class AsciiFormatter:
     def __init__(self):
         self.columns = [ 
             { "name": "Asset Class", "width": 25 }, 
-            { "name": "allocation", "width": 5 },
+            { "name": "alloc.", "width": 5 },
             { "name": "value", "width": 10 }
         ]
         self.full = False
