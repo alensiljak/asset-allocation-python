@@ -19,9 +19,12 @@ SECTION = "Default"
 
 class ConfigKeys(Enum):
     asset_allocation_database_path = auto(),
+    # The root account for cash balance.
+    cash_root = auto(),
+    # The base currency to use for AA. Use symbol (i.e. EUR).
+    default_currency = auto(),
     gnucash_book_path = auto(),
-    price_database_path = auto(),
-    default_currency = auto()
+    price_database_path = auto()
 
 
 class Config:

@@ -58,6 +58,8 @@ class AppAggregate:
         loader.load_stock_links()
         # read stock quantities from GnuCash
         loader.load_stock_quantity()
+        # Load cash balances
+        loader.load_cash_balances()
         # read prices from Prices database
         loader.load_stock_prices()
         # recalculate stock values into base currency
