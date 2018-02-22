@@ -13,7 +13,15 @@ class StocksInfo:
         self.config = config
         # GnuCash db session/book.
         self.gc_book: Book = None
-        # Prices session. For now, using GC for prices db.
+        # Prices session.
+        self.pricedb_session = None
+
+    def close_databases(self):
+        """ Close all database sessions """
+        if self.gc_book:
+            self.gc_book.close()
+        if self.pricedb_session:
+            self.pricedb_session.close()
 
     def load_stock_quantity(self, symbol: str) -> Decimal(0):
         """ retrieves stock quantity """
@@ -62,7 +70,7 @@ class StocksInfo:
         Load security prices from PriceDb.
         Uses a separate price database that can be updated on (or from) Android.
         """
-        from pricedb import dal, app
+        from pricedb import app
         # from pricedb.model import Price
 
         namespace = None
@@ -72,9 +80,16 @@ class StocksInfo:
             namespace = symbol_parts[0]
             mnemonic = symbol_parts[1]
 
-        session = dal.get_default_session()
-        pricedb = app.PriceDbApplication()
-        app.session = session
+        session = self.__get_pricedb_session()
+        pricedb = app.PriceDbApplication(session)
         latest_price = pricedb.get_latest_price(namespace, mnemonic)
 
         return latest_price
+
+    def __get_pricedb_session(self):
+        """ Provides initialization and access to module-level session """
+        from pricedb import dal
+
+        if not self.pricedb_session:
+            self.pricedb_session = dal.get_default_session()
+        return self.pricedb_session

@@ -40,6 +40,7 @@ class AssetAllocationLoader:
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
             cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
+            #book.flush()
         
         # assign to cash asset class.
         cash = self.model.get_cash_asset_class()
@@ -100,7 +101,7 @@ class AssetAllocationLoader:
                 price.currency = self.config.get(ConfigKeys.default_currency)
             stock.price = price.value
             stock.currency = price.currency
-        # info.gc_book.close()
+        info.close_databases()
 
     def recalculate_stock_values_into_base(self):
         """ Loads the exchange rates and recalculates stock holding values into 
