@@ -4,7 +4,7 @@ from logging import log, DEBUG
 from piecash import Book, open_book
 import piecash
 from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
-from pricedb.model import Price
+from pricedb.model import PriceModel
 
 from .config import Config, ConfigKeys
 
@@ -32,7 +32,7 @@ class StocksInfo:
         quantity = sec.get_quantity()
         return quantity
 
-    def load_latest_price(self, symbol: str) -> Price:
+    def load_latest_price(self, symbol: str) -> PriceModel:
         """ Loads the latest price for security """
         # result = self.__load_latest_prices_from_gnucash(symbol)
         result = self.__load_latest_prices_from_pricedb(symbol)
@@ -60,12 +60,12 @@ class StocksInfo:
             raise ValueError(f"Price not found for {symbol}!")
         
         # Map to price model.
-        result = Price()
+        result = PriceModel()
         result.value = price.value
         result.currency = price.currency.mnemonic
         return result
 
-    def __load_latest_prices_from_pricedb(self, symbol: str) -> Price:
+    def __load_latest_prices_from_pricedb(self, symbol: str) -> PriceModel:
         """
         Load security prices from PriceDb.
         Uses a separate price database that can be updated on (or from) Android.

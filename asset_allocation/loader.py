@@ -5,13 +5,13 @@ from typing import List
 
 from gnucash_portfolio.bookaggregate import BookAggregate
 from piecash import Account, Book, Commodity, open_book
+from pricedb.model import PriceModel
 
 from . import dal
 from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
 from .model import AssetAllocationModel, AssetClass, Stock
 from .stocks import StocksInfo
-from pricedb.model import Price
 
 
 class AssetAllocationLoader:
@@ -26,7 +26,7 @@ class AssetAllocationLoader:
         """ Loads cash balances from GnuCash book and recalculates into the default currency """
         from gnucash_portfolio.accounts import AccountsAggregate, AccountAggregate
         from gnucash_portfolio.currencies import CurrenciesAggregate
-        
+
         cfg = self.__get_config()
         cash_root_name = cfg.get(ConfigKeys.cash_root)
         # Load cash from all accounts under the root.
@@ -35,13 +35,13 @@ class AssetAllocationLoader:
             # currency
             cur_agg = CurrenciesAggregate(book)
             currency = cur_agg.get_by_symbol(self.model.currency)
-            
+
             svc = AccountsAggregate(book)
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
             cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
             #book.flush()
-        
+
         # assign to cash asset class.
         cash = self.model.get_cash_asset_class()
         cash.curr_value = cash_balance
@@ -57,18 +57,18 @@ class AssetAllocationLoader:
         db = self.__get_session()
         first_level = (
             db.query(dal.AssetClass)
-                .filter(dal.AssetClass.parentid == None)
-                .order_by(dal.AssetClass.sortorder)
-                .all()
+            .filter(dal.AssetClass.parentid == None)
+            .order_by(dal.AssetClass.sortorder)
+            .all()
         )
-        
+
         # create tree
         for entity in first_level:
             ac = self.__map_entity(entity)
             self.model.classes.append(ac)
             # Add to index
             self.model.asset_classes.append(ac)
-            
+
             # append child classes recursively
             self.__load_child_classes(ac)
 
@@ -100,9 +100,9 @@ class AssetAllocationLoader:
         """ Load latest prices for securities """
         info = StocksInfo(self.config)
         for stock in self.model.stocks:
-            price: Price = info.load_latest_price(stock.symbol)
+            price: PriceModel = info.load_latest_price(stock.symbol)
             if not price:
-                price = Price()
+                price = PriceModel()
                 price.currency = self.config.get(ConfigKeys.default_currency)
             stock.price = price.value
             stock.currency = price.currency
@@ -122,9 +122,9 @@ class AssetAllocationLoader:
         db = self.__get_session()
         entities = (
             db.query(dal.AssetClass)
-                .filter(dal.AssetClass.parentid == ac.id)
-                .order_by(dal.AssetClass.sortorder)
-                .all()
+            .filter(dal.AssetClass.parentid == ac.id)
+            .order_by(dal.AssetClass.sortorder)
+            .all()
         )
         # map
         for entity in entities:

@@ -6,11 +6,12 @@ from .model import AssetAllocationModel, AssetClass, Stock
 
 class AsciiFormatter:
     """ Formats the model for the console output """
+
     def __init__(self):
-        self.columns = [ 
-            { "name": "Asset Class", "width": 25 }, 
-            { "name": "alloc.", "width": 5 },
-            { "name": "value", "width": 10 }
+        self.columns = [
+            {"name": "Asset Class", "width": 25},
+            {"name": "alloc.", "width": 5},
+            {"name": "value", "width": 10}
         ]
         self.full = False
 
@@ -38,7 +39,7 @@ class AsciiFormatter:
 
         for child in ac.classes:
             output += self.__get_ac_tree(child)
-        
+
         if self.full:
             for stock in ac.stocks:
                 output += self.__get_stock_row(stock, ac.depth + 1) + "\n"
@@ -54,10 +55,10 @@ class AsciiFormatter:
         # Indent according to depth.
         for _ in range(0, ac.depth):
             name_col = f"    {name_col}"
-        
+
         width = self.columns[0]["width"]
         output += f"{name_col:<{width}}: "
-        
+
         allocation = f"{ac.allocation:.2f}"
         output += f"{allocation:>5}"
 
@@ -69,7 +70,7 @@ class AsciiFormatter:
         # CSI="\x1B["
         # # red = 31, green = 32
         # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
-        
+
         return output
 
     def __get_stock_row(self, stock: Stock, depth: int) -> str:
@@ -104,4 +105,3 @@ class AsciiFormatter:
 class HtmlFormatter:
     """ Formats HTML output """
     pass
-    
