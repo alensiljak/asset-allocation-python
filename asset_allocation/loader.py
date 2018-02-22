@@ -55,7 +55,12 @@ class AssetAllocationLoader:
 
         # Asset Classes
         db = self.__get_session()
-        first_level = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == None).all()
+        first_level = (
+            db.query(dal.AssetClass)
+                .filter(dal.AssetClass.parentid == None)
+                .order_by(dal.AssetClass.sortorder)
+                .all()
+        )
         
         # create tree
         for entity in first_level:
@@ -115,7 +120,12 @@ class AssetAllocationLoader:
         """ Loads child classes/stocks """
         # load child classes for ac
         db = self.__get_session()
-        entities = db.query(dal.AssetClass).filter(dal.AssetClass.parentid == ac.id).all()
+        entities = (
+            db.query(dal.AssetClass)
+                .filter(dal.AssetClass.parentid == ac.id)
+                .order_by(dal.AssetClass.sortorder)
+                .all()
+        )
         # map
         for entity in entities:
             child_ac = self.__map_entity(entity)
