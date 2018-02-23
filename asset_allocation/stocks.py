@@ -1,12 +1,15 @@
 """ Operations on Stocks in GC book """
+import os
 from decimal import Decimal
-from logging import log, DEBUG
-from piecash import Book, open_book
+from logging import DEBUG, log
+
 import piecash
 from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
+from piecash import Book, open_book
 from pricedb.model import PriceModel
 
 from .config import Config, ConfigKeys
+
 
 class StocksInfo:
     def __init__(self, config: Config):
@@ -44,6 +47,12 @@ class StocksInfo:
             gc_db = self.config.get(ConfigKeys.gnucash_book_path)
             if not gc_db:
                 raise AttributeError("GnuCash book path not configured.")
+            # check if this is the abs file exists
+            if not os.path.isabs(gc_db):
+                gc_db = resource_filename(Requirement.parse("Asset-Allocation"), gc_db)
+                if not os.path.exists(gc_db):
+                    raise ValueError(f"Invalid GnuCash book path {gc_db}")
+            
             self.gc_book = open_book(gc_db)
         return self.gc_book
     
