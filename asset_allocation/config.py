@@ -12,6 +12,7 @@ import shutil
 from pkg_resources import Requirement, resource_filename
 
 
+package_name = "Asset-Allocation"
 config_filename = "asset_allocation.ini"
 #config_filename = "data/asset_allocation.ini"
 SECTION = "Default"
@@ -59,14 +60,11 @@ class Config:
             log(ERROR, "file not found: %s", file_path)
             raise FileNotFoundError("configuration file not found %s", file_path)
 
-        # log(DEBUG, "using config file %s", file_path)
-        # contents = self.get_contents(file_path)
-        # self.config.read_string(contents)
         self.config.read(file_path)
 
     def __get_config_template_path(self) -> str:
         """ gets the default config path from resources """
-        filename = resource_filename(Requirement.parse("Asset-Allocation"), 
+        filename = resource_filename(Requirement.parse(package_name), 
                                      "data/" + config_filename)
         return filename
 
@@ -90,7 +88,10 @@ class Config:
             raise FileNotFoundError("Config file could not be copied to user dir!")
 
     def get_config_path(self) -> str:
-        """ Returns the path where the active config file is expected """
+        """
+        Returns the path where the active config file is expected.
+        This is the user's profile folder.
+        """
         dst_dir = self.__get_user_path()
         dst = dst_dir + "/" + config_filename
         return dst
