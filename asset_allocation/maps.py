@@ -3,6 +3,7 @@ Maps between entities and model objects
 """
 from . import dal, model
 
+
 class AssetClassMapper():
     """ Maps the asset class record to the Asset Class object """
     def __init__(self):
@@ -26,3 +27,13 @@ class AssetClassMapper():
 
     # def entity_from_model(self, model: model.AssetClass):
     #     """ Populate entity from the model """
+
+
+class ModelMapper():
+    """ Maps the asset allocation model """
+    def __init__(self, model: model.AssetAllocationModel):
+        self.model = model
+
+    def map_to_linear(self):
+        """ Maps the tree to a linear representation suitable for display """
+        pass
