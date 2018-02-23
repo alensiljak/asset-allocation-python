@@ -2,6 +2,7 @@
 import os
 from decimal import Decimal
 from logging import DEBUG, log
+from pkg_resources import Requirement, resource_filename
 
 import piecash
 from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
