@@ -1,3 +1,4 @@
 SQLAlchemy==1.1.15
 setuptools==28.8.0
 click==6.7
+Price-Database
