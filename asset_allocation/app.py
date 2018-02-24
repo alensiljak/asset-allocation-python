@@ -84,3 +84,17 @@ class AppAggregate:
             print(f"The model is valid. Congratulations")
         else:
             print(f"The model is invalid.")
+
+    def export_symbols(self):
+        """ Exports all used symbols """
+        session = self.open_session()
+        links = session.query(AssetClassStock).order_by(AssetClassStock.symbol).all()
+        output = []
+        for link in links:
+            output.append(link.symbol + '\n')
+
+        # Save output to a text file.
+        with open("symbols.txt", mode='w') as file:
+            file.writelines(output)
+
+        print("Symbols exported to symbols.txt")

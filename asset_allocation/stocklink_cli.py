@@ -41,4 +41,12 @@ def import_csv(file):
 
     return False
 
-sl.add_command(import_csv)    
+@click.command("export")
+def export_symbols():
+    """ Exports all the symbols used in asset allocation """
+    app = AppAggregate()
+    app.export_symbols()
+
+#############################
+sl.add_command(import_csv)
+sl.add_command(export_symbols)
