@@ -55,5 +55,5 @@ cli.add_command(validate)
 
 ##############################
 # For debugging.
-# if __name__ == '__main__':
-#     show(["--format", "ascii", "--full"])
+if __name__ == '__main__':
+    show(["--format", "ascii", "--full"])

@@ -53,6 +53,8 @@ class AppAggregate:
         loader = AssetAllocationLoader()
         model = loader.load_tree_from_db()
 
+        model.validate()
+
         # securities
         # read stock links
         loader.load_stock_links()

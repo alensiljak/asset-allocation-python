@@ -1,5 +1,5 @@
 """
-Asset Allocation module. To be replaced by Asset-Allocation package.
+Asset Allocation module.
 """
 from decimal import Decimal
 from typing import List
@@ -23,10 +23,6 @@ class _AssetBase:
 
         self.name = None
         # Set allocation %.
-        self.allocation = Decimal(0)
-        # if "allocation" in json_node:
-        #     self.allocation = Decimal(json_node["allocation"])
-        # else:
         self.allocation = Decimal(0)
         # How much is currently allocated, in %.
         self.curr_alloc = Decimal(0)
@@ -123,6 +119,19 @@ class AssetClass(_AssetBase):
         self.classes = []
         self.stocks: List[Stock] = []
 
+    @property
+    def child_allocation(self):
+        """ The sum of all child asset classes' allocations """
+        sum = Decimal(0)
+        if self.classes:
+            for child in self.classes:
+                sum += child.child_allocation
+        else:
+            # This is not a branch but a leaf. Return own allocation.
+            sum = self.allocation
+
+        return sum
+
     def __repr__(self):
         return f"<AssetClass (name='{self.name}',allocation='{self.allocation:.2f}')>"
 
@@ -160,10 +169,24 @@ class AssetAllocationModel:
 
     def validate(self) -> bool:
         """ Validate that the values match. Incomplete! """
-        # TODO asset class allocation should match the sum of children's allocations
+        # Asset class allocation should match the sum of children's allocations.
         # Each group should be compared.
+        sum = Decimal(0)
         for ac in self.classes:
-            pass
+            sum += ac.allocation
+
+            if ac.classes:
+                # get the sum of all the children's allocations
+                child_alloc_sum = ac.child_allocation
+                # compare to set allocation
+                if ac.allocation != child_alloc_sum:
+                    message = f"The sum of child allocation does not match the set allocation for {ac}, child sum = {child_alloc_sum}!"
+                    #raise ValueError()
+                    print(message)
+
+        # TODO also make sure that the sum of 1st level children matches 100
+        if sum != Decimal(100):
+            raise ValueError(f"The sum of all allocations ({sum}) does not equal 100!")
 
         return False
 

@@ -3,6 +3,7 @@ Output formatters for the AA model
 """
 from .model import AssetAllocationModel, AssetClass, Stock
 from .maps import ModelMapper
+from .view_model import AssetAllocationViewModel
 
 
 class AsciiFormatter:
@@ -33,12 +34,50 @@ class AsciiFormatter:
         # Asset classes
 
         view_model = ModelMapper(model).map_to_linear(self.full)
+        for row in view_model:
+            output += self.__format_row(row) + "\n"
         
         return output
 
-    def __format_row(self):
+    def __format_row(self, row: AssetAllocationViewModel):
         """ display-format one row """
-        pass
+        """ Formats one Asset Class record """
+        output = ""
+
+        # Name
+        name_col = row.name
+        # Indent according to depth.
+        for _ in range(0, row.depth):
+            name_col = f"    {name_col}"
+
+        width = self.columns[0]["width"]
+        output += f"{name_col:<{width}}: "
+
+        # Set Allocation
+        allocation = ""
+        if row.set_allocation:
+            allocation = f"{row.set_allocation:.2f}"
+        output += f"{allocation:>5}"
+
+        # value
+        value = f"{row.curr_value:,.0f}"
+        output += f"{value:>9}"
+
+        if row.curr_value_own_currency:
+            # Value in security's currency.
+            value = f"({row.curr_value_own_currency:,.0f}"
+            output += f"{value:>8}"
+
+            output += f" {row.own_currency}"
+            output += ")"
+        
+        # https://en.wikipedia.org/wiki/ANSI_escape_code
+        # CSI="\x1B["
+        # # red = 31, green = 32
+        # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
+
+        return output
+
 
 class HtmlFormatter:
     """ Formats HTML output """

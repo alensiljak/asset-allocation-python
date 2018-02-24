@@ -1,0 +1,2 @@
+""" View Model mapping tests """
+

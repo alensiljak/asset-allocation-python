@@ -2,6 +2,7 @@
 Maps between entities and model objects
 """
 from . import dal, model
+from .model import Stock
 from .view_model import AssetAllocationViewModel
 
 
@@ -31,7 +32,7 @@ class AssetClassMapper():
 
 
 class ModelMapper():
-    """ Maps the asset allocation model """
+    """ Maps the asset allocation model to various other representations. """
     def __init__(self, model: model.AssetAllocationModel):
         self.model = model
 
@@ -40,72 +41,59 @@ class ModelMapper():
         result = []
 
         for ac in self.model.classes:
-            row = self.__get_ac_tree(ac, with_stocks)
+            rows = self.__get_ac_tree(ac, with_stocks)
+            result += rows
+        return result
 
     def __get_ac_tree(self, ac: model.AssetClass, with_stocks: bool):
         """ formats the ac tree - entity with child elements """
-        output = self.__get_ac_row(ac) + "\n"
+        output = []
+        output.append(self.__get_ac_row(ac))
 
         for child in ac.classes:
-            output += self.__get_ac_tree(child)
+            output += self.__get_ac_tree(child, with_stocks)
 
         if with_stocks:
             for stock in ac.stocks:
-                output += self.__get_stock_row(stock, ac.depth + 1) + "\n"
+                row = self.__get_stock_row(stock, ac.depth + 1)
+                output.append(row)
 
         return output
 
-    def __get_ac_row(self, ac: model.AssetClass):
+    def __get_ac_row(self, ac: model.AssetClass) -> AssetAllocationViewModel:
         """ Formats one Asset Class record """
-        output = ""
+        view_model = AssetAllocationViewModel()
 
+        view_model.depth = ac.depth
+        
         # Name
-        name_col = ac.name
-        # Indent according to depth.
-        for _ in range(0, ac.depth):
-            name_col = f"    {name_col}"
+        view_model.name = ac.name
 
-        width = self.columns[0]["width"]
-        output += f"{name_col:<{width}}: "
-
-        allocation = f"{ac.allocation:.2f}"
-        output += f"{allocation:>5}"
+        view_model.set_allocation = ac.allocation
+        view_model.curr_allocation = ac.curr_alloc
 
         # value
-        value = f"{ac.curr_value:,.0f}"
-        output += f"{value:>9}"
+        view_model.curr_value = ac.curr_value
 
-        # https://en.wikipedia.org/wiki/ANSI_escape_code
-        # CSI="\x1B["
-        # # red = 31, green = 32
-        # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
-
-        return output
+        return view_model
 
     def __get_stock_row(self, stock: Stock, depth: int) -> str:
         """ formats stock row """
-        output = ""
+        view_model = AssetAllocationViewModel()
+
+        view_model.depth = depth
 
         # Symbol
-        name_col = stock.symbol
-        for _ in range(0, depth):
-            name_col = f"    {name_col}"
-        width = self.columns[0]["width"]
-        output += f"{name_col:<{width}}: "
+        view_model.name = stock.symbol
 
         # Current allocation
-        allocation = f"{stock.curr_alloc:.2f}"
-        output += f"{allocation:>5}"
+        view_model.curr_allocation = stock.curr_alloc
 
         # Value in base currency
-        value = f"{stock.value_in_base_currency:,.0f}"
-        output += f"{value:>9}"
+        view_model.curr_value = stock.value_in_base_currency
 
         # Value in security's currency.
-        value = f"({stock.value:,.0f}"
-        output += f"{value:>8}"
+        view_model.curr_value_own_currency = stock.value
+        view_model.own_currency = stock.currency
 
-        output += f" {stock.currency}"
-        output += ")"
-
-        return output
+        return view_model
