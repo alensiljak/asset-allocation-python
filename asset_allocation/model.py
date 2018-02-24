@@ -172,21 +172,23 @@ class AssetAllocationModel:
         # Asset class allocation should match the sum of children's allocations.
         # Each group should be compared.
         sum = Decimal(0)
-        for ac in self.classes:
-            sum += ac.allocation
 
+        # Go through each asset class, not just the top level.
+        for ac in self.asset_classes:
             if ac.classes:
                 # get the sum of all the children's allocations
                 child_alloc_sum = ac.child_allocation
                 # compare to set allocation
                 if ac.allocation != child_alloc_sum:
-                    message = f"The sum of child allocation does not match the set allocation for {ac}, child sum = {child_alloc_sum}!"
+                    message = f"The sum of child allocations {child_alloc_sum:.2f} invalid for {ac}!"
                     #raise ValueError()
                     print(message)
 
-        # TODO also make sure that the sum of 1st level children matches 100
+        # also make sure that the sum of 1st level children matches 100
+        for ac in self.classes:
+            sum += ac.allocation
         if sum != Decimal(100):
-            raise ValueError(f"The sum of all allocations ({sum}) does not equal 100!")
+            raise ValueError(f"The sum of all allocations ({sum:.2f}) does not equal 100!")
 
         return False
 
