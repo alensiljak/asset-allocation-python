@@ -14,6 +14,7 @@ class AssetAllocationViewModel:
         
         self.set_value = Decimal(0)
         self.curr_value = Decimal(0)
+        self.diff_value = Decimal(0)
 
         self.curr_value_own_currency = Decimal(0)
         self.own_currency = None

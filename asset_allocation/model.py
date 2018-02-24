@@ -8,10 +8,6 @@ except ImportError: import json
 import os
 from os import path
 from logging import log, DEBUG
-# from piecash import Book, Commodity, Price
-# from gnucash_portfolio.accounts import AccountAggregate, AccountsAggregate
-# from gnucash_portfolio.securities import SecurityAggregate, SecuritiesAggregate
-# from gnucash_portfolio.currencies import CurrencyAggregate
 
 
 class _AssetBase:
@@ -36,7 +32,7 @@ class _AssetBase:
         # Allocated value
         self.curr_value = Decimal(0)
         # Difference between allocation and allocated
-        self.value_diff = Decimal(0)
+        #self.value_diff = Decimal(0)
 
         # Threshold. Expressed in %.
         self.threshold = Decimal(0)
@@ -48,6 +44,11 @@ class _AssetBase:
         self.sort_order = None
         # Depth level within an asset class tree
         self.depth = 0
+
+    @property
+    def value_diff(self):
+        """ The difference between set value and current value. """
+        return self.curr_value - self.alloc_value
 
     @property
     def fullname(self):

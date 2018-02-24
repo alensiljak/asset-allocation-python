@@ -76,6 +76,8 @@ class ModelMapper():
         view_model.curr_value = ac.curr_value
         # expected value
         view_model.set_value = ac.alloc_value
+        # diff
+        view_model.diff_value = ac.value_diff
 
         return view_model
 

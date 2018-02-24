@@ -70,6 +70,7 @@ class AppAggregate:
         # calculate
         model.calculate_totals()
         model.calculate_set_values()
+        
 
         # return the model for display
         return model
