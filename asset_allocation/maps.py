@@ -71,6 +71,8 @@ class ModelMapper():
 
         view_model.set_allocation = ac.allocation
         view_model.curr_allocation = ac.curr_alloc
+        view_model.diff_allocation = ac.alloc_diff
+        view_model.alloc_diff_perc = ac.alloc_diff_perc
 
         # value
         view_model.curr_value = ac.curr_value

@@ -23,9 +23,9 @@ class _AssetBase:
         # How much is currently allocated, in %.
         self.curr_alloc = Decimal(0)
         # Difference between allocation and allocated.
-        self.alloc_diff = Decimal(0)
+        # self.alloc_diff = Decimal(0)
         # Difference in percentages of allocation
-        self.alloc_diff_perc = Decimal(0)
+        # self.alloc_diff_perc = Decimal(0)
 
         # Current value in currency.
         self.alloc_value = Decimal(0)
@@ -44,6 +44,17 @@ class _AssetBase:
         self.sort_order = None
         # Depth level within an asset class tree
         self.depth = 0
+
+    @property
+    def alloc_diff(self):
+        """ The difference between set allocation and current allocation """
+        return self.curr_alloc - self.allocation
+
+    @property
+    def alloc_diff_perc(self):
+        """ The difference in current allocation vs set allocation expressed as 
+        a percentage """
+        return self.alloc_diff * 100 / self.allocation
 
     @property
     def value_diff(self):
@@ -198,16 +209,21 @@ class AssetAllocationModel:
         for ac in self.asset_classes:
             ac.alloc_value = self.total_amount * ac.allocation / Decimal(100)
 
-    def calculate_totals(self):
+    def calculate_current_allocation(self):
+        """ Calculates the current allocation % based on the value """
+        for ac in self.asset_classes:
+            ac.curr_alloc = ac.curr_value * 100 / self.total_amount
+
+    def calculate_current_value(self):
         """ Add all the stock values and assign to the asset classes """
         # must be recursive
         total = Decimal(0)
         for ac in self.classes:
-            self.__calculate_total(ac)
+            self.__calculate_current_value(ac)
             total += ac.curr_value
         self.total_amount = total
 
-    def __calculate_total(self, asset_class: AssetClass):
+    def __calculate_current_value(self, asset_class: AssetClass):
         """ Calculate totals for asset class by adding all the children values """
         # Is this the final asset class, the one with stocks?
         if asset_class.stocks:
@@ -222,5 +238,5 @@ class AssetAllocationModel:
         if asset_class.classes:
             # load totals for child classes
             for child in asset_class.classes:
-                self.__calculate_total(child)
+                self.__calculate_current_value(child)
                 asset_class.curr_value += child.curr_value

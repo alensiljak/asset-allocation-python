@@ -68,9 +68,9 @@ class AppAggregate:
         # recalculate stock values into base currency
         loader.recalculate_stock_values_into_base()
         # calculate
-        model.calculate_totals()
+        model.calculate_current_value()
         model.calculate_set_values()
-        
+        model.calculate_current_allocation()
 
         # return the model for display
         return model

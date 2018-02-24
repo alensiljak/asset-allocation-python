@@ -13,9 +13,11 @@ class AsciiFormatter:
         self.columns = [
             {"name": "Asset Class", "width": 25},
             {"name": "alloc.", "width": 5},
-            {"name": "value", "width": 9},
-            {"name": "loc.cur.", "width": 13},
+            {"name": "cur.al.", "width": 6},
+            {"name": "diff.", "width": 6},
             {"name": "al.val.", "width": 8},
+            {"name": "value", "width": 8},
+            {"name": "loc.cur.", "width": 13},
             {"name": "diff", "width": 8}
         ]
         self.full = False
@@ -50,66 +52,80 @@ class AsciiFormatter:
         """ display-format one row """
         """ Formats one Asset Class record """
         output = ""
+        index = 0
 
         # Name
-        index = 0
-        name_col = row.name
+        value = row.name
         # Indent according to depth.
         for _ in range(0, row.depth):
-            name_col = f"    {name_col}"
-
-        width = self.columns[index]["width"]
-        output += f"{name_col:<{width}}"
+            value = f"   {value}"
+        output += self.append_text_column(value, index)
 
         # Set Allocation
         value = ""
-        index = 1
+        index += 1
         if row.set_allocation:
             value = f"{row.set_allocation:.2f}"
-        width = self.columns[index]["width"]
-        output += f"{value:>{width}}"
+        output += self.append_num_column(value, index)
 
-        # value
-        index = 2
+        # Current Allocation
+        index += 1
+        value = f"{row.curr_allocation:.2f}"
+        output += self.append_num_column(value, index)
+
+        # Allocation difference, percentage
+        index += 1
+        # value = f"{row.diff_allocation:.2f}"
+        value = f"{row.alloc_diff_perc:.0f} %"
+        output += self.append_num_column(value, index)
+
+        # Allocated value
+        index += 1
+        value = ""
+        if row.set_value:
+            value = f"{row.set_value:,.0f}"
+        output += self.append_num_column(value, index)
+
+        # Current Value
+        index += 1
         value = f"{row.curr_value:,.0f}"
-        width = self.columns[index]["width"]
-        output += f"{value:>{width}}"
+        output += self.append_num_column(value, index)
 
         # Value in security's currency. Show only if displaying full model, with stocks.
+        index += 1
         if self.full:
-            index = 3
             value = ""
             if row.curr_value_own_currency:
                 value = f"({row.curr_value_own_currency:,.0f}"
                 value += f" {row.own_currency}"
                 value += ")"
-            width = self.columns[index]["width"]
-            output += f"{value:>{width}}"
+            output += self.append_num_column(value, index)
         
-        # Set value
-        index = 4
-        value = ""
-        if row.set_value:
-            value = f"{row.set_value:,.0f}"
-        width = self.columns[index]["width"]
-        output += f"{value:>{width}}"
-
         # https://en.wikipedia.org/wiki/ANSI_escape_code
         CSI="\x1B["
         # red = 31, green = 32
         # output += CSI+"31;40m" + "Colored Text" + CSI + "0m"
 
         # Value diff
-        index = 5
+        index += 1
         value = ""
         if row.diff_value:
             value = f"{row.diff_value:,.0f}"
             # Color the output
             # value = f"{CSI};40m{value}{CSI};40m"
-        width = self.columns[index]["width"]
-        output += f"{value:>{width}}"
+        output += self.append_num_column(value, index)
 
         return output
+
+    def append_num_column(self, text: str, index: int):
+        """ Add value to the output row, width based on index """
+        width = self.columns[index]["width"]
+        return f"{text:>{width}}"
+
+    def append_text_column(self, text: str, index: int):
+        """ Add value to the output row, width based on index """
+        width = self.columns[index]["width"]
+        return f"{text:<{width}}"
 
 
 class HtmlFormatter:
