@@ -74,6 +74,8 @@ class ModelMapper():
 
         # value
         view_model.curr_value = ac.curr_value
+        # expected value
+        view_model.set_value = ac.alloc_value
 
         return view_model
 

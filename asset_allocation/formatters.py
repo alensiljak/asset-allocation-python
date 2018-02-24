@@ -73,8 +73,8 @@ class AsciiFormatter:
         output += f"{value:>13}"
         
         # Set value
-        set_value = f"{row.set_value:.2f}"
-        output += f"{set_value:>6}"
+        set_value = f"{row.set_value:,.2f}"
+        output += f"{set_value:>10}"
 
         # https://en.wikipedia.org/wiki/ANSI_escape_code
         # CSI="\x1B["
