@@ -13,7 +13,8 @@ class AsciiFormatter:
         self.columns = [
             {"name": "Asset Class", "width": 25},
             {"name": "alloc.", "width": 5},
-            {"name": "value", "width": 10}
+            {"name": "value", "width": 10},
+            {"name": "al.val.", "width": 8}
         ]
         self.full = False
 
@@ -63,14 +64,18 @@ class AsciiFormatter:
         value = f"{row.curr_value:,.0f}"
         output += f"{value:>9}"
 
+        # Value in security's currency.
+        value = ""
         if row.curr_value_own_currency:
-            # Value in security's currency.
             value = f"({row.curr_value_own_currency:,.0f}"
-            output += f"{value:>8}"
-
-            output += f" {row.own_currency}"
-            output += ")"
+            value += f" {row.own_currency}"
+            value += ")"
+        output += f"{value:>13}"
         
+        # Set value
+        set_value = f"{row.set_value:.2f}"
+        output += f"{set_value:>6}"
+
         # https://en.wikipedia.org/wiki/ANSI_escape_code
         # CSI="\x1B["
         # # red = 31, green = 32

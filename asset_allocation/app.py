@@ -69,6 +69,7 @@ class AppAggregate:
         loader.recalculate_stock_values_into_base()
         # calculate
         model.calculate_totals()
+        model.calculate_set_values()
 
         # return the model for display
         return model

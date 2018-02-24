@@ -192,6 +192,11 @@ class AssetAllocationModel:
 
         return False
 
+    def calculate_set_values(self):
+        """ Calculate the expected totals based on set allocations """
+        for ac in self.asset_classes:
+            alloc_value = ac.allocation * 100 / self.total_amount
+
     def calculate_totals(self):
         """ Add all the stock values and assign to the asset classes """
         # must be recursive
