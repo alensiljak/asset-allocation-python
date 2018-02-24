@@ -11,7 +11,7 @@ class AsciiFormatter:
 
     def __init__(self):
         self.columns = [
-            {"name": "Asset Class", "width": 25},
+            {"name": "Asset Class", "width": 20},
             {"name": "alloc.", "width": 5},
             {"name": "cur.al.", "width": 6},
             {"name": "diff.", "width": 6},
