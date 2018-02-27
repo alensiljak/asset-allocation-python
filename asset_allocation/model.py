@@ -75,6 +75,21 @@ class _AssetBase:
         return prefix + self.name
 
 
+class CashBalance:
+    """ Similar to Stock but keeps track of cash balance per currency """
+    def __init__(self, symbol: str):
+        self.symbol: str = symbol
+        # Own currency
+        self.currency: str = None
+        # Value in own currency
+        self.value: Decimal = None
+        # Value in base currency
+        self.value_in_base_currency: Decimal = None
+
+    def __repr__(self):
+        return f"<Cash (symbol='{self.symbol}',value={self.value} {self.currency},({self.value_in_base_currency}))>"
+
+
 class Stock:
     """Stock link"""
     def __init__(self, symbol: str):

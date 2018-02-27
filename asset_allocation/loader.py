@@ -10,7 +10,7 @@ from pricedb.model import PriceModel
 from . import dal
 from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
-from .model import AssetAllocationModel, AssetClass, Stock
+from .model import AssetAllocationModel, AssetClass, Stock, CashBalance
 from .stocks import StocksInfo
 from .currency import CurrencyConverter
 
@@ -38,33 +38,33 @@ class AssetAllocationLoader:
             svc = AccountsAggregate(book)
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
-            # cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
             cash_balances = acct_svc.load_cash_balances_with_children(cash_root_name)
 
-        cash_balance = self.__get_cash_balance_in_base_currency(
-            cash_balances, self.base_currency)
+        # Treat each sum per currency as a Stock, for display in full mode.
+        self.__store_cash_balances_per_currency(cash_balances)
+
+        # Total in base currency.
+        # cash_balance = self.__get_cash_balance_in_base_currency(cash_balances)
 
         # assign to cash asset class.
-        cash = self.model.get_cash_asset_class()
-        cash.curr_value = cash_balance
+        # cash = self.model.get_cash_asset_class()
+        # cash.curr_value = cash_balance
 
-    def __get_cash_balance_in_base_currency(self, cash_balances, dest_currency: str) -> Decimal:
-        """ Calculates and converts cash balances into a sum in the base currency """
-        # Load currency rates.
-        total = Decimal(0)
-        conv = CurrencyConverter()
+    def __store_cash_balances_per_currency(self, cash_balances):
+        """ Store balance per currency as Stock records under Cash class """
+        cash = self.model.get_cash_asset_class()
 
         for cur_symbol in cash_balances:
-            value = cash_balances[cur_symbol]["total"]
-            # self.logger.debug(f"{cur_symbol}:{value}")
+            item = CashBalance(cur_symbol)
+            item.parent = cash
+            
+            quantity = cash_balances[cur_symbol]["total"]
+            item.value = Decimal(quantity)
+            item.currency = cur_symbol
 
-            if cur_symbol != dest_currency:
-                # Convert currency
-                conv.load_currency(cur_symbol)
-                value = value * conv.rate.value
-            # Add to total.
-            total += value
-        return total
+            # self.logger.debug(f"adding {item}")
+            cash.stocks.append(item)
+            self.model.stocks.append(item)
 
     def load_tree_from_db(self) -> AssetAllocationModel:
         """ Reads the asset allocation data only, and constructs the AA tree """
@@ -119,14 +119,17 @@ class AssetAllocationLoader:
     def load_stock_prices(self):
         """ Load latest prices for securities """
         info = StocksInfo(self.config)
-        for stock in self.model.stocks:
-            price: PriceModel = info.load_latest_price(stock.symbol)
-            # self.logger.debug(f"Latest price for {stock.symbol}: {price.value}")
+        for item in self.model.stocks:
+            price: PriceModel = info.load_latest_price(item.symbol)
             if not price:
+                # Use a dummy price of 1, effectively keeping the original amount.
                 price = PriceModel()
                 price.currency = self.config.get(ConfigKeys.default_currency)
-            stock.price = price.value
-            stock.currency = price.currency
+                price.value = Decimal(1)
+            item.price = price.value
+            if isinstance(item, Stock):
+                item.currency = price.currency
+                # Do not set currency for Cash balance records.
         info.close_databases()
 
     def recalculate_stock_values_into_base(self):
@@ -135,20 +138,20 @@ class AssetAllocationLoader:
         from .currency import CurrencyConverter
 
         conv = CurrencyConverter()
-        with BookAggregate() as svc:
-            for stock in self.model.stocks:
-                if stock.currency != self.base_currency:
-                    # Recalculate into base currency
-                    conv.load_currency(stock.currency)
-                    #val_base = svc.currencies.get_amount_in_base_currency(stock.currency, stock.value)
-                    assert isinstance(stock.value, Decimal)
-                    val_base = stock.value * conv.rate.value
-                    # self.logger.debug(f"recalculating {stock.symbol} {stock.value} {stock.currency} to {val_base}")
-                else:
-                    # Already in base currency.
-                    val_base = stock.value
+        cash = self.model.get_cash_asset_class()
 
-                stock.value_in_base_currency = val_base
+        for stock in self.model.stocks:
+            if stock.currency != self.base_currency:
+                # Recalculate into base currency
+                conv.load_currency(stock.currency)
+                assert isinstance(stock.value, Decimal)
+                val_base = stock.value * conv.rate.value
+            else:
+                # Already in base currency.
+                val_base = stock.value
+
+            stock.value_in_base_currency = val_base
+            # self.logger.debug(f"processing {stock}")
 
     def __load_child_classes(self, ac: AssetClass):
         """ Loads child classes/stocks """

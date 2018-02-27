@@ -2,7 +2,7 @@
 Maps between entities and model objects
 """
 from . import dal, model
-from .model import Stock
+from .model import Stock, CashBalance
 from .view_model import AssetAllocationViewModel
 
 
@@ -52,7 +52,10 @@ class ModelMapper():
 
         if with_stocks:
             for stock in ac.stocks:
-                row = self.__get_stock_row(stock, ac.depth + 1)
+                if isinstance(stock, Stock):
+                    row = self.__get_stock_row(stock, ac.depth + 1)
+                elif isinstance(stock, CashBalance):
+                    row = self.__get_cash_row(stock, ac.depth + 1)
                 output.append(row)
 
         return output
@@ -82,6 +85,8 @@ class ModelMapper():
 
     def __get_stock_row(self, stock: Stock, depth: int) -> str:
         """ formats stock row """
+        assert isinstance(stock, Stock)
+
         view_model = AssetAllocationViewModel()
 
         view_model.depth = depth
@@ -98,5 +103,25 @@ class ModelMapper():
         # Value in security's currency.
         view_model.curr_value_own_currency = stock.value
         view_model.own_currency = stock.currency
+
+        return view_model
+
+    def __get_cash_row(self, item: CashBalance, depth: int) -> str:
+        """ formats stock row """
+        assert isinstance(item, CashBalance)
+
+        view_model = AssetAllocationViewModel()
+
+        view_model.depth = depth
+
+        # Symbol
+        view_model.name = item.symbol
+
+        # Value in base currency
+        view_model.curr_value = item.value_in_base_currency
+
+        # Value in security's currency.
+        view_model.curr_value_own_currency = item.value
+        view_model.own_currency = item.currency
 
         return view_model
