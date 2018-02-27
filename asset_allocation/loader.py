@@ -23,6 +23,7 @@ class AssetAllocationLoader:
         self.mapper = None
         self.model: AssetAllocationModel = None
         self.logger = None
+        # Base currency is just an ISO symbol (i.e. "EUR")
         self.base_currency = base_currency
 
     def load_cash_balances(self):
@@ -130,9 +131,22 @@ class AssetAllocationLoader:
     def recalculate_stock_values_into_base(self):
         """ Loads the exchange rates and recalculates stock holding values into 
         base currency """
+        from .currency import CurrencyConverter
+
+        conv = CurrencyConverter()
         with BookAggregate() as svc:
             for stock in self.model.stocks:
-                val_base = svc.currencies.get_amount_in_base_currency(stock.currency, stock.value)
+                if stock.currency != self.base_currency:
+                    # Recalculate into base currency
+                    conv.load_currency(stock.currency)
+                    #val_base = svc.currencies.get_amount_in_base_currency(stock.currency, stock.value)
+                    assert isinstance(stock.value, Decimal)
+                    val_base = stock.value * conv.rate.value
+                    # self.logger.debug(f"recalculating {stock.symbol} {stock.value} {stock.currency} to {val_base}")
+                else:
+                    # Already in base currency.
+                    val_base = stock.value
+
                 stock.value_in_base_currency = val_base
 
     def __load_child_classes(self, ac: AssetClass):
