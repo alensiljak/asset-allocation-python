@@ -27,9 +27,6 @@ class AssetClassMapper():
 
         return obj
 
-    # def entity_from_model(self, model: model.AssetClass):
-    #     """ Populate entity from the model """
-
 
 class ModelMapper():
     """ Maps the asset allocation model to various other representations. """

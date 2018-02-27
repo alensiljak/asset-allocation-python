@@ -21,11 +21,12 @@ class AssetAllocationLoader:
         self.config = config
         self.mapper = None
         self.model: AssetAllocationModel = None
+        self.logger = None
 
     def load_cash_balances(self):
         """ Loads cash balances from GnuCash book and recalculates into the default currency """
         from gnucash_portfolio.accounts import AccountsAggregate, AccountAggregate
-        from gnucash_portfolio.currencies import CurrenciesAggregate
+        # from gnucash_portfolio.currencies import CurrenciesAggregate
 
         cfg = self.__get_config()
         cash_root_name = cfg.get(ConfigKeys.cash_root)
@@ -33,14 +34,17 @@ class AssetAllocationLoader:
         gc_db = self.config.get(ConfigKeys.gnucash_book_path)
         with open_book(gc_db) as book:
             # currency
-            cur_agg = CurrenciesAggregate(book)
-            currency = cur_agg.get_by_symbol(self.model.currency)
+            # cur_agg = CurrenciesAggregate(book)
+            # currency = cur_agg.get_by_symbol(self.model.currency)
 
             svc = AccountsAggregate(book)
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
-            cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
-            #book.flush()
+            # cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
+            self.logger.debug(root_account)
+            something = acct_svc.load_cash_balances_with_children(root_account)
+            self.logger.debug(something)
+            cash_balance = 0
 
         # assign to cash asset class.
         cash = self.model.get_cash_asset_class()

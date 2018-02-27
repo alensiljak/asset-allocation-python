@@ -12,6 +12,7 @@ class AppAggregate:
     """ Provides entry points to the application """
     def __init__(self):
         self.session = None
+        self.logger = None
         # self.open_session()
 
     def create_asset_class(self, item: AssetClass):
@@ -51,6 +52,7 @@ class AppAggregate:
         """ Creates and populates the Asset Allocation model. The main function of the app. """
         # load from db
         loader = AssetAllocationLoader()
+        loader.logger = self.logger
         model = loader.load_tree_from_db()
 
         model.validate()
