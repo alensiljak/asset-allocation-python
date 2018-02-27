@@ -121,6 +121,7 @@ class AssetAllocationLoader:
         info = StocksInfo(self.config)
         for stock in self.model.stocks:
             price: PriceModel = info.load_latest_price(stock.symbol)
+            # self.logger.debug(f"Latest price for {stock.symbol}: {price.value}")
             if not price:
                 price = PriceModel()
                 price.currency = self.config.get(ConfigKeys.default_currency)
