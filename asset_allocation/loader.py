@@ -12,43 +12,58 @@ from .config import Config, ConfigKeys
 from .maps import AssetClassMapper
 from .model import AssetAllocationModel, AssetClass, Stock
 from .stocks import StocksInfo
+from .currency import CurrencyConverter
 
 
 class AssetAllocationLoader:
     """ The new allocation loader """
-    def __init__(self, config=None, session=None):
+    def __init__(self, base_currency="EUR", config=None, session=None):
         self.session = session
         self.config = config
         self.mapper = None
         self.model: AssetAllocationModel = None
         self.logger = None
+        self.base_currency = base_currency
 
     def load_cash_balances(self):
         """ Loads cash balances from GnuCash book and recalculates into the default currency """
         from gnucash_portfolio.accounts import AccountsAggregate, AccountAggregate
-        # from gnucash_portfolio.currencies import CurrenciesAggregate
 
         cfg = self.__get_config()
         cash_root_name = cfg.get(ConfigKeys.cash_root)
         # Load cash from all accounts under the root.
         gc_db = self.config.get(ConfigKeys.gnucash_book_path)
         with open_book(gc_db) as book:
-            # currency
-            # cur_agg = CurrenciesAggregate(book)
-            # currency = cur_agg.get_by_symbol(self.model.currency)
-
             svc = AccountsAggregate(book)
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
             # cash_balance = acct_svc.get_cash_balance_with_children(root_account, currency)
-            self.logger.debug(root_account)
-            something = acct_svc.load_cash_balances_with_children(root_account)
-            self.logger.debug(something)
-            cash_balance = 0
+            cash_balances = acct_svc.load_cash_balances_with_children(cash_root_name)
+
+        cash_balance = self.__get_cash_balance_in_base_currency(
+            cash_balances, self.base_currency)
 
         # assign to cash asset class.
         cash = self.model.get_cash_asset_class()
         cash.curr_value = cash_balance
+
+    def __get_cash_balance_in_base_currency(self, cash_balances, dest_currency: str) -> Decimal:
+        """ Calculates and converts cash balances into a sum in the base currency """
+        # Load currency rates.
+        total = Decimal(0)
+        conv = CurrencyConverter()
+
+        for cur_symbol in cash_balances:
+            value = cash_balances[cur_symbol]["total"]
+            # self.logger.debug(f"{cur_symbol}:{value}")
+
+            if cur_symbol != dest_currency:
+                # Convert currency
+                conv.load_currency(cur_symbol)
+                value = value * conv.rate.value
+            # Add to total.
+            total += value
+        return total
 
     def load_tree_from_db(self) -> AssetAllocationModel:
         """ Reads the asset allocation data only, and constructs the AA tree """

@@ -64,7 +64,7 @@ class Config:
 
     def __get_config_template_path(self) -> str:
         """ gets the default config path from resources """
-        filename = resource_filename(Requirement.parse(package_name), 
+        filename = resource_filename(Requirement.parse(package_name),
                                      "data/" + config_filename)
         return filename
 
@@ -115,11 +115,11 @@ class Config:
         """ Sets a value in config """
         assert isinstance(option, ConfigKeys)
 
-        # As currently we only have 1 section. 
+        # As currently we only have 1 section.
         section = SECTION
         self.config.set(section, option.name, value)
         self.save()
-    
+
     def get(self, option: ConfigKeys):
         """ Retrieves a config value """
         assert isinstance(option, ConfigKeys)

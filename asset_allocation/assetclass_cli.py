@@ -1,11 +1,14 @@
 """
 CLI for dealing with Asset Classes
 """
-import click
 import sys
 from decimal import Decimal
+
+import click
+
 from asset_allocation.app import AppAggregate
 from asset_allocation.dal import AssetClass
+
 
 @click.group()
 def ac():

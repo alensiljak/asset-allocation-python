@@ -22,7 +22,7 @@ class AsciiFormatter:
         ]
         self.full = False
 
-    def format(self, model: AssetAllocationModel, full: bool=False):
+    def format(self, model: AssetAllocationModel, full: bool = False):
         """ Returns the view-friendly output of the aa model """
         self.full = full
 
@@ -45,7 +45,7 @@ class AsciiFormatter:
         view_model = ModelMapper(model).map_to_linear(self.full)
         for row in view_model:
             output += self.__format_row(row) + "\n"
-        
+
         return output
 
     def __format_row(self, row: AssetAllocationViewModel):
@@ -100,7 +100,7 @@ class AsciiFormatter:
                 value += f" {row.own_currency}"
                 value += ")"
             output += self.append_num_column(value, index)
-        
+
         # https://en.wikipedia.org/wiki/ANSI_escape_code
         # CSI="\x1B["
         # red = 31, green = 32

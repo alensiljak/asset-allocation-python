@@ -51,7 +51,9 @@ class AppAggregate:
     def get_asset_allocation_model(self):
         """ Creates and populates the Asset Allocation model. The main function of the app. """
         # load from db
-        loader = AssetAllocationLoader()
+        # TODO set the base currency
+        base_currency = "EUR"
+        loader = AssetAllocationLoader(base_currency=base_currency)
         loader.logger = self.logger
         model = loader.load_tree_from_db()
 
@@ -80,7 +82,7 @@ class AppAggregate:
     def validate_model(self):
         """ Validate the model """
         model: AssetAllocationModel = self.get_asset_allocation_model()
-        
+
         valid = model.validate()
         if valid:
             print(f"The model is valid. Congratulations")
