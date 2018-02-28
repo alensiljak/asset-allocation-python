@@ -26,7 +26,6 @@ def cli():
 
 @click.command()
 @click.option("--format", default="ascii", help="format for the report output. ascii or html.")
-                # prompt="output format")
 @click.option("--full", is_flag=True, default=False, help="Display full model with securities")
 @click_log.simple_verbosity_option(logger)
 def show(format, full):
@@ -49,7 +48,7 @@ def show(format, full):
 
 @click.command()
 def validate():
-    """ validate model """
+    """ validate asset allocation model """
     app = AppAggregate()
     app.validate_model()
 

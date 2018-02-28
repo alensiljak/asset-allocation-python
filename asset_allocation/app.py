@@ -2,7 +2,7 @@
 Application Aggregate
 Main entry point.
 """
-from .dal import AssetClass, AssetClassStock, get_session
+from .dal import AssetClass, AssetClassStock
 from .config import Config, ConfigKeys
 from .loader import AssetAllocationLoader
 from .model import AssetAllocationModel
@@ -30,6 +30,36 @@ class AppAggregate:
         self.session.delete(to_delete)
         self.save()
 
+    def find_unallocated_holdings(self):
+        """ Identifies any holdings that are not included in asset allocation """
+        # Get linked securities
+        session = self.open_session()
+        linked_entities = session.query(AssetClassStock).all()
+        linked = []
+        # linked = map(lambda x: f"{x.symbol}", linked_entities)
+        for item in linked_entities:
+            linked.append(item.symbol)
+
+        # Get all securities with balance > 0.
+        from .stocks import StocksInfo
+
+        stocks = StocksInfo()
+        holdings = stocks.get_symbols_with_positive_balances()
+        if not holdings:
+            print(f"No unallocated holdings.")
+            
+        # Find those which are not included in the stock links.
+        non_alloc = []
+        index = -1
+        for item in holdings:
+            try:
+                index = linked.index(item)
+                self.logger.debug(index)
+            except ValueError:
+                non_alloc.append(item)
+
+        return non_alloc
+
     def get(self, id: int) -> AssetClass:
         """ Loads Asset Class """
         self.open_session()
@@ -38,6 +68,8 @@ class AppAggregate:
 
     def open_session(self):
         """ Opens a db session and returns it """
+        from .dal import get_session
+
         cfg = Config()
         db_path = cfg.get(ConfigKeys.asset_allocation_database_path)
 

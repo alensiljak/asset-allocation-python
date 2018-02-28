@@ -1,7 +1,15 @@
 """ CLI for handling stock links """
-import click
+import logging
 import sys
+
+import click
+import click_log
+
 from .app import AppAggregate
+
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
+
 
 @click.group()
 def sl():
@@ -47,6 +55,19 @@ def export_symbols():
     app = AppAggregate()
     app.export_symbols()
 
+@click.command()
+@click_log.simple_verbosity_option(logger)
+def unallocated():
+    """ Identify unallocated holdings """
+    app = AppAggregate()
+    app.logger = logger
+    unalloc = app.find_unallocated_holdings()
+
+    for item in unalloc:
+        print(item)
+
+
 #############################
 sl.add_command(import_csv)
 sl.add_command(export_symbols)
+sl.add_command(unallocated)
