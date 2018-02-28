@@ -63,6 +63,9 @@ def unallocated():
     app.logger = logger
     unalloc = app.find_unallocated_holdings()
 
+    if not unalloc:
+        print(f"No unallocated holdings.")
+
     for item in unalloc:
         print(item)
 

@@ -44,9 +44,8 @@ class AppAggregate:
         from .stocks import StocksInfo
 
         stocks = StocksInfo()
+        stocks.logger = self.logger
         holdings = stocks.get_symbols_with_positive_balances()
-        if not holdings:
-            print(f"No unallocated holdings.")
             
         # Find those which are not included in the stock links.
         non_alloc = []

@@ -25,6 +25,7 @@ class StocksInfo:
         self.gc_book: Book = None
         # Prices session.
         self.pricedb_session = None
+        self.logger = None
 
     def close_databases(self):
         """ Close all database sessions """
@@ -79,7 +80,7 @@ class StocksInfo:
                 if balance > Decimal(0):
                     holdings.append(f"{item.namespace}:{item.mnemonic}")
                 else:
-                    print(f"0 balance for {item}")
+                    self.logger.debug(f"0 balance for {item}")
             # holdings = map(lambda x: , holding_entities)
 
         return holdings
