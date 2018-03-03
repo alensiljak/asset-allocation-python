@@ -24,8 +24,7 @@ class ConfigKeys(Enum):
     cash_root = auto(),
     # The base currency to use for AA. Use symbol (i.e. EUR).
     default_currency = auto(),
-    gnucash_book_path = auto(),
-    price_database_path = auto()
+    gnucash_book_path = auto()
 
 
 class Config:
