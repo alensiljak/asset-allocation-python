@@ -32,7 +32,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='Asset-Allocation',  # Required
+    name='Asset_Allocation',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -40,7 +40,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.0',  # Required
+    version='0.2.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -71,7 +71,7 @@ setup(
     # above.
     author_email='alen.siljak@gmx.com',  # Optional
 
-    license='GPL3',
+    license='GPL version 3',
 
     # Classifiers help users find your project by categorizing it.
     #
@@ -82,14 +82,14 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        # 'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: GPL3',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
@@ -122,9 +122,9 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['Click', 'sqlalchemy'],  # Optional
+    install_requires=['click', 'sqlalchemy'],  # Optional
 
-    python_requires='>=3',
+    python_requires='>=3.0',
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
@@ -149,6 +149,10 @@ setup(
     # package_data={  # Optional
     #     'sample': ['package_data.dat'],
     # },
+    package_data={
+        '': ['README.md'],
+        'templates': ['asset_allocation.ini', 'asset_allocation.db']
+    },
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:

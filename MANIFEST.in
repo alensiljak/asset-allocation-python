@@ -1,0 +1,3 @@
+include README.md
+include asset_allocation/templates/asset_allocation.ini
+include asset_allocation/templates/asset_allocation.db

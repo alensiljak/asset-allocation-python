@@ -15,16 +15,19 @@ def ac():
     """ Operates the Asset Class records """
     pass
 
+
 @click.command()
-@click.argument("name", "-n") #, prompt="Asset Class name") # help="Name of the Asset Class"
+# , prompt="Asset Class name") # help="Name of the Asset Class"
+@click.argument("name", "-n")
 def add(name):
     """ Add new Asset Class """
     item = AssetClass()
     item.name = name
     app = AppAggregate()
     app.create_asset_class(item)
-    
+
     print(f"Asset class {name} created.")
+
 
 @click.command()
 @click.argument("id", type=int)
@@ -32,6 +35,7 @@ def delete(id):
     """ Deletes asset class record """
     app = AppAggregate()
     app.delete(id)
+
 
 @click.command()
 @click.argument("id", type=int)
@@ -46,7 +50,7 @@ def edit(id: int, parent: int, alloc: Decimal):
     item = app.get(id)
     if not item:
         raise KeyError("Asset Class with id %s not found.", id)
-    
+
     if parent:
         assert parent != id, "Parent can not be set to self."
 
@@ -55,7 +59,7 @@ def edit(id: int, parent: int, alloc: Decimal):
         item.parentid = parent
         saved = True
         # click.echo(f"parent set to {parent}")
-    
+
     if alloc:
         assert alloc != Decimal(0)
 
@@ -68,6 +72,7 @@ def edit(id: int, parent: int, alloc: Decimal):
     else:
         click.echo("No data modified. Use --help to see possible parameters.")
 
+
 @click.command("list")
 def my_list():
     """ Lists all asset classes """
@@ -76,15 +81,17 @@ def my_list():
     for item in classes:
         print(item)
 
+
 @click.command("import")
-@click.argument("file") #, help="The path to the CSV file to import. The first row must contain column names."
+#, help="The path to the CSV file to import. The first row must contain column names."
+@click.argument("file")
 def my_import(file):
     """ Import Asset Class(es) from a .csv file """
     lines = ""
     with open(file) as csv_file:
         lines = csv_file.readlines()
 
-    # Header, the first line.    
+    # Header, the first line.
     header = lines[0]
     lines.remove(header)
     header = header.rstrip()
@@ -107,6 +114,7 @@ def my_import(file):
             app.session.close()
         counter += 1
     print(f"Data imported. {counter} rows created.")
+
 
 ac.add_command(add)
 ac.add_command(delete)
