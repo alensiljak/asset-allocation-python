@@ -14,7 +14,7 @@ from pkg_resources import Requirement, resource_filename
 
 package_name = "Asset-Allocation"
 config_filename = "asset_allocation.ini"
-#config_filename = "data/asset_allocation.ini"
+config_folder = "asset_allocation/templates/"
 SECTION = "Default"
 
 
@@ -65,7 +65,7 @@ class Config:
     def __get_config_template_path(self) -> str:
         """ gets the default config path from resources """
         filename = resource_filename(Requirement.parse(package_name),
-                                     "data/" + config_filename)
+                                     config_folder + config_filename)
         return filename
 
     def __get_user_path(self) -> str:
