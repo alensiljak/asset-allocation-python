@@ -2,18 +2,18 @@
 Application Aggregate
 Main entry point.
 """
-from .dal import AssetClass, AssetClassStock
 from .config import Config, ConfigKeys
+from .dal import AssetClass, AssetClassStock
 from .loader import AssetAllocationLoader
 from .model import AssetAllocationModel
 
 
 class AppAggregate:
     """ Provides entry points to the application """
+
     def __init__(self):
         self.session = None
         self.logger = None
-        # self.open_session()
 
     def create_asset_class(self, item: AssetClass):
         """ Inserts the record """
@@ -46,7 +46,7 @@ class AppAggregate:
         stocks = StocksInfo()
         stocks.logger = self.logger
         holdings = stocks.get_symbols_with_positive_balances()
-            
+
         # Find those which are not included in the stock links.
         non_alloc = []
         index = -1
@@ -62,7 +62,8 @@ class AppAggregate:
     def get(self, id: int) -> AssetClass:
         """ Loads Asset Class """
         self.open_session()
-        item = self.session.query(AssetClass).filter(AssetClass.id == id).first()
+        item = self.session.query(AssetClass).filter(
+            AssetClass.id == id).first()
         return item
 
     def open_session(self):
@@ -70,6 +71,7 @@ class AppAggregate:
         from .dal import get_session
 
         cfg = Config()
+        cfg.logger = self.logger
         db_path = cfg.get(ConfigKeys.asset_allocation_database_path)
 
         self.session = get_session(db_path)
@@ -97,7 +99,7 @@ class AppAggregate:
         loader.load_stock_quantity()
         # Load cash balances
         loader.load_cash_balances()
-        #loader.session
+        # loader.session
         # read prices from Prices database
         loader.load_stock_prices()
         # recalculate stock values into base currency
@@ -123,7 +125,8 @@ class AppAggregate:
     def export_symbols(self):
         """ Exports all used symbols """
         session = self.open_session()
-        links = session.query(AssetClassStock).order_by(AssetClassStock.symbol).all()
+        links = session.query(AssetClassStock).order_by(
+            AssetClassStock.symbol).all()
         output = []
         for link in links:
             output.append(link.symbol + '\n')

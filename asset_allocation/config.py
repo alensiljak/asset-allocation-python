@@ -3,14 +3,14 @@ Configuration handling
 The config file is stored in data directory and is located by using Resources.
 Ref: http://peak.telecommunity.com/DevCenter/setuptools#non-package-data-files
 """
-from enum import Enum, auto
-from configparser import ConfigParser
-from logging import log, DEBUG, ERROR
 import io
 import os.path
 import shutil
-from pkg_resources import Requirement, resource_filename
+from configparser import ConfigParser
+from enum import Enum, auto
+from logging import DEBUG, ERROR, log
 
+from pkg_resources import Requirement, resource_filename
 
 package_name = "Asset-Allocation"
 config_filename = "asset_allocation.ini"
