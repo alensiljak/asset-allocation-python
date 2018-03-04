@@ -115,6 +115,7 @@ class AppAggregate:
     def validate_model(self):
         """ Validate the model """
         model: AssetAllocationModel = self.get_asset_allocation_model()
+        model.logger = self.logger
 
         valid = model.validate()
         if valid:

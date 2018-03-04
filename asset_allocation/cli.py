@@ -47,9 +47,11 @@ def show(format, full):
     print(output)
 
 @click.command()
+@click_log.simple_verbosity_option(logger)
 def validate():
     """ validate asset allocation model """
     app = AppAggregate()
+    app.logger = logger
     app.validate_model()
 
 

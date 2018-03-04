@@ -1,13 +1,15 @@
 """
 Asset Allocation module.
 """
+import os
+import logging
 from decimal import Decimal
+from logging import DEBUG, log
+from os import path
 from typing import List
+
 try: import simplejson as json
 except ImportError: import json
-import os
-from os import path
-from logging import log, DEBUG
 
 
 class _AssetBase:
@@ -166,6 +168,7 @@ class AssetClass(_AssetBase):
 class AssetAllocationModel:
     """ The container class """
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.total_amount: Decimal = Decimal(0)
         self.currency = None
         # Child classes, the first-level only. This is the beginning of the tree.
@@ -208,16 +211,20 @@ class AssetAllocationModel:
                 # compare to set allocation
                 if ac.allocation != child_alloc_sum:
                     message = f"The sum of child allocations {child_alloc_sum:.2f} invalid for {ac}!"
-                    #raise ValueError()
+                    self.logger.warn(message)
                     print(message)
+                    return False
 
         # also make sure that the sum of 1st level children matches 100
         for ac in self.classes:
             sum += ac.allocation
         if sum != Decimal(100):
-            raise ValueError(f"The sum of all allocations ({sum:.2f}) does not equal 100!")
+            message = f"The sum of all allocations ({sum:.2f}) does not equal 100!"
+            self.logger.warn(message)
+            print(message)
+            return False
 
-        return False
+        return True
 
     def calculate_set_values(self):
         """ Calculate the expected totals based on set allocations """
