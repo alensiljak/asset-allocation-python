@@ -122,7 +122,7 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['click', 'sqlalchemy', 'piecash', 'gnucash_portfolio'],  # Optional
+    install_requires=['click', 'sqlalchemy', 'piecash', 'pricedb', 'gnucash_portfolio'],  # Optional
 
     python_requires='>=3.0',
 
