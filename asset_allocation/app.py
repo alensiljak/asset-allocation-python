@@ -21,6 +21,16 @@ class AppAggregate:
         session.add(item)
         session.commit()
 
+    def add_stock_to_class(self, assetclass_id: int, symbol: str):
+        """ Add a stock link to an asset class """
+        item = AssetClassStock()
+        item.assetclassid = assetclass_id
+        item.symbol = symbol
+
+        self.save()
+
+        return item
+
     def delete(self, id: int):
         """ Delete asset class """
         assert isinstance(id, int)

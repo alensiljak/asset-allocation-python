@@ -21,7 +21,9 @@ def sl():
 @click.option("--asssetclass", "-ac", type=int, help="Id of the asset class to add to")
 def add(assetclass, symbol):
     """ Add a stock to an asset class """
-    pass
+    app = AppAggregate()
+    new_item = app.add_stock_to_class(assetclass, symbol)
+    print(f"Record added: {new_item}.")
 
 @click.command("import")
 @click.argument("file")
@@ -78,7 +80,7 @@ def unallocated():
 
 
 #############################
-# sl.add_command(add)
+sl.add_command(add)
 sl.add_command(import_csv)
 sl.add_command(export_symbols)
 sl.add_command(unallocated)
