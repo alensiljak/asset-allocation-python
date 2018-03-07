@@ -16,6 +16,13 @@ def sl():
     """ Stock link handling """
     pass
 
+@click.command()
+@click.option("--symbol", "-s", help="Symbol to add")
+@click.option("--asssetclass", "-ac", type=int, help="Id of the asset class to add to")
+def add(assetclass, symbol):
+    """ Add a stock to an asset class """
+    pass
+
 @click.command("import")
 @click.argument("file")
 def import_csv(file):
@@ -71,6 +78,7 @@ def unallocated():
 
 
 #############################
+# sl.add_command(add)
 sl.add_command(import_csv)
 sl.add_command(export_symbols)
 sl.add_command(unallocated)
