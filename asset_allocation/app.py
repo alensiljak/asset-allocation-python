@@ -23,10 +23,15 @@ class AppAggregate:
 
     def add_stock_to_class(self, assetclass_id: int, symbol: str):
         """ Add a stock link to an asset class """
+        assert isinstance(symbol, str)
+        assert isinstance(assetclass_id, int)
+        
         item = AssetClassStock()
         item.assetclassid = assetclass_id
         item.symbol = symbol
 
+        session = self.open_session()
+        session.add(item)
         self.save()
 
         return item

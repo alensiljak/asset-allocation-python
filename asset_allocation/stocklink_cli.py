@@ -17,10 +17,15 @@ def sl():
     pass
 
 @click.command()
+@click.option("--assetclass", "-ac", type=int, help="Id of the asset class to add to")
 @click.option("--symbol", "-s", help="Symbol to add")
-@click.option("--asssetclass", "-ac", type=int, help="Id of the asset class to add to")
-def add(assetclass, symbol):
+@click_log.simple_verbosity_option(logger)
+def add(assetclass: int, symbol: str):
     """ Add a stock to an asset class """
+    assert isinstance(symbol, str)
+    assert isinstance(assetclass, int)
+
+    symbol = symbol.upper()
     app = AppAggregate()
     new_item = app.add_stock_to_class(assetclass, symbol)
     print(f"Record added: {new_item}.")
