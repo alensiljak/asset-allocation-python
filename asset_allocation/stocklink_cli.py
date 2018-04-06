@@ -17,8 +17,8 @@ def sl():
     pass
 
 @click.command()
-@click.option("--assetclass", "-ac", type=int, help="Id of the asset class to add to")
-@click.option("--symbol", "-s", help="Symbol to add")
+@click.option("--assetclass", "-ac", type=int, help="Id of the asset class to add to", required=True)
+@click.option("--symbol", "-s", help="Symbol to add", required=True)
 @click_log.simple_verbosity_option(logger)
 def add(assetclass: int, symbol: str):
     """ Add a stock to an asset class """
