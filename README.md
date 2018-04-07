@@ -5,6 +5,9 @@ ToC:
     - [Configuration](#configuration)
     - [Data Store](#data-store)
 - [Tests](#tests)
+- [Distribution](#distribution)
+        - [Test Site](#test-site)
+        - [Production Site](#production-site)
 
 # Asset-Allocation
 Asset Allocation implementation in Python
@@ -36,3 +39,17 @@ The sample data file is in "data" folder.
 
 To lint the code, execute `pylint` from the project root directory.
 To run tests, execute `pytest` from the project root directory.
+
+# Distribution
+
+### Test Site
+
+```
+python setup.py sdist upload -r test
+```
+
+### Production Site
+
+```
+python setup.py sdist upload -r pypi
+```
