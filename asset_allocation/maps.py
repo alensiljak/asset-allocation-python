@@ -52,6 +52,7 @@ class ModelMapper():
 
         if with_stocks:
             for stock in ac.stocks:
+                row = None
                 if isinstance(stock, Stock):
                     row = self.__get_stock_row(stock, ac.depth + 1)
                 elif isinstance(stock, CashBalance):

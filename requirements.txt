@@ -1,6 +1,6 @@
-SQLAlchemy==1.1.15
-setuptools==28.8.0
+SQLAlchemy
+setuptools
 piecash
-click==6.7
+click
 click-log
 Price-Database

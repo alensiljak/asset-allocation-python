@@ -31,7 +31,7 @@ class AssetClass(Base):
     diff_adjustment = Column(Float(asdecimal=True))
 
     stock_links = relationship('AssetClassStock', backref="assetclass", lazy='dynamic')
-    #, cascade = "all,delete")
+    # , cascade = "all,delete")
 
     def __repr__(self):
         return "<AssetClass (name='%s',id='%s',allocation='%.2f',parent='%s')>" % (

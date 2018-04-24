@@ -211,7 +211,7 @@ class AssetAllocationModel:
                 # compare to set allocation
                 if ac.allocation != child_alloc_sum:
                     message = f"The sum of child allocations {child_alloc_sum:.2f} invalid for {ac}!"
-                    self.logger.warn(message)
+                    self.logger.warning(message)
                     print(message)
                     return False
 
@@ -220,7 +220,7 @@ class AssetAllocationModel:
             sum += ac.allocation
         if sum != Decimal(100):
             message = f"The sum of all allocations ({sum:.2f}) does not equal 100!"
-            self.logger.warn(message)
+            self.logger.warning(message)
             print(message)
             return False
 

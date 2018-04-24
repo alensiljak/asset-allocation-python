@@ -33,7 +33,7 @@ def show(format, full):
     # load asset allocation
     app = AppAggregate()
     app.logger = logger
-    model = app.get_asset_allocation_model()
+    model = app.get_asset_allocation()
 
     if format == "ascii":
         formatter = AsciiFormatter()
