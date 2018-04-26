@@ -45,6 +45,8 @@ class StocksInfo:
 
     def load_latest_price(self, symbol: SecuritySymbol) -> PriceModel:
         """ Loads the latest price for security """
+        assert isinstance(symbol, SecuritySymbol)
+
         # result = self.__load_latest_prices_from_gnucash(symbol)
         result = self.__load_latest_prices_from_pricedb(symbol)
         return result
@@ -109,6 +111,8 @@ class StocksInfo:
         Uses a separate price database that can be updated on (or from) Android.
         """
         from pricedb import PriceDbApplication
+
+        assert isinstance(symbol, SecuritySymbol)
 
         session = self.__get_pricedb_session()
         price_db = PriceDbApplication(session)

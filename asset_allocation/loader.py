@@ -118,9 +118,14 @@ class AssetAllocationLoader:
 
     def load_stock_prices(self):
         """ Load latest prices for securities """
+        from pricedb import SecuritySymbol
+
         info = StocksInfo(self.config)
         for item in self.model.stocks:
-            price: PriceModel = info.load_latest_price(item.symbol)
+            symbol = SecuritySymbol("", "")
+            symbol.parse(item.symbol)
+
+            price: PriceModel = info.load_latest_price(symbol)
             if not price:
                 # Use a dummy price of 1, effectively keeping the original amount.
                 price = PriceModel()

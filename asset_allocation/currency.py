@@ -1,11 +1,11 @@
 """ Operations with currencies """
 from pricedb.repositories import PriceRepository
-from pricedb import PriceDbApplication
-from pricedb.model import PriceModel
+from pricedb import PriceDbApplication, PriceModel, SecuritySymbol
 
 
 class CurrencyConverter:
     """ Convert between currencies """
+
     def __init__(self):
         self.rate: PriceModel = None
 
@@ -18,6 +18,7 @@ class CurrencyConverter:
 
         app = PriceDbApplication()
         # TODO use the base_currency parameter for the query #33
-        self.rate = app.get_latest_price("CURRENCY", mnemonic)
+        symbol = SecuritySymbol("CURRENCY", mnemonic)
+        self.rate = app.get_latest_price(symbol)
         if not self.rate:
             raise ValueError(f"No rate found for {mnemonic}!")
