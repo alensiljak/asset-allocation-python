@@ -3,4 +3,4 @@ setuptools
 piecash
 click
 click-log
-Price-Database
+PriceDb

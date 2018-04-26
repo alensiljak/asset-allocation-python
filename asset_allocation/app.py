@@ -2,6 +2,8 @@
 Application Aggregate
 Main entry point.
 """
+from typing import List
+
 from .config import Config, ConfigKeys
 from .dal import AssetClass, AssetClassStock
 from .loader import AssetAllocationLoader
@@ -25,7 +27,7 @@ class AppAggregate:
         """ Add a stock link to an asset class """
         assert isinstance(symbol, str)
         assert isinstance(assetclass_id, int)
-        
+
         item = AssetClassStock()
         item.assetclassid = assetclass_id
         item.symbol = symbol
@@ -127,6 +129,19 @@ class AppAggregate:
 
         # return the model for display
         return model
+
+    def get_asset_classes_for_security(self, namespace: str, symbol: str) -> List[AssetClass]:
+        """ Find all asset classes (should be only one at the moment, though!) to which the symbol belongs """
+        full_symbol = symbol
+        if namespace:
+            full_symbol = f"{namespace}:{symbol}"
+
+        query = (
+            self.session.query(AssetClassStock)
+                .filter(AssetClassStock.symbol == full_symbol)
+        )
+        result = query.all()
+        return result
 
     def validate_model(self):
         """ Validate the model """
