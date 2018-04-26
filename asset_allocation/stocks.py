@@ -1,7 +1,6 @@
 """ Operations on Stocks in GC book """
 import os
 from decimal import Decimal
-from logging import DEBUG, log
 from typing import List
 
 from pkg_resources import Requirement, resource_filename
@@ -9,7 +8,7 @@ from pkg_resources import Requirement, resource_filename
 import piecash
 from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
 from piecash import Book, Commodity, open_book
-from pricedb.model import PriceModel
+from pricedb import PriceModel, SecuritySymbol
 
 from .config import Config, ConfigKeys
 
@@ -19,6 +18,7 @@ class StocksInfo:
     Provides security information from GnuCash book.
     This is a proxy class to GC-Portfolio operations.
     """
+
     def __init__(self, config: Config = None):
         self.config = config if config else Config()
         # GnuCash db session/book.
@@ -43,7 +43,7 @@ class StocksInfo:
         quantity = sec.get_quantity()
         return quantity
 
-    def load_latest_price(self, symbol: str) -> PriceModel:
+    def load_latest_price(self, symbol: SecuritySymbol) -> PriceModel:
         """ Loads the latest price for security """
         # result = self.__load_latest_prices_from_gnucash(symbol)
         result = self.__load_latest_prices_from_pricedb(symbol)
@@ -60,7 +60,7 @@ class StocksInfo:
                 gc_db = resource_filename(Requirement.parse("Asset-Allocation"), gc_db)
                 if not os.path.exists(gc_db):
                     raise ValueError(f"Invalid GnuCash book path {gc_db}")
-            
+
             self.gc_book = open_book(gc_db)
         return self.gc_book
 
@@ -69,9 +69,9 @@ class StocksInfo:
         from gnucash_portfolio import BookAggregate
 
         holdings = []
-        
+
         with BookAggregate() as book:
-            #query = book.securities.query.filter(Commodity.)
+            # query = book.securities.query.filter(Commodity.)
             holding_entities = book.securities.get_all()
             for item in holding_entities:
                 # Check holding balance
@@ -88,7 +88,7 @@ class StocksInfo:
     def __load_latest_prices_from_gnucash(self, symbol):
         """ Load security prices from GnuCash book. Deprecated. """
         book = self.get_gc_book()
-        
+
         svc = SecuritiesAggregate(book)
         agg = svc.get_aggregate_for_symbol(symbol)
         if not agg:
@@ -96,20 +96,20 @@ class StocksInfo:
         price: piecash.Price = agg.get_last_available_price()
         if not price:
             raise ValueError(f"Price not found for {symbol}!")
-        
+
         # Map to price model.
         result = PriceModel()
         result.value = price.value
         result.currency = price.currency.mnemonic
         return result
 
-    def __load_latest_prices_from_pricedb(self, symbol: str) -> PriceModel:
+    def __load_latest_prices_from_pricedb(self, symbol: SecuritySymbol) -> PriceModel:
         """
         Load security prices from PriceDb.
         Uses a separate price database that can be updated on (or from) Android.
         """
-        from pricedb import app
-        # from pricedb.model import Price
+        from pricedb import PriceDbApplication
+        app = PriceDbApplication()
 
         namespace = None
         mnemonic = symbol
@@ -120,7 +120,7 @@ class StocksInfo:
 
         session = self.__get_pricedb_session()
         pricedb = app.PriceDbApplication(session)
-        latest_price = pricedb.get_latest_price(namespace, mnemonic)
+        latest_price = pricedb.get_latest_price(symbol)
 
         return latest_price
 
