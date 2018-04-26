@@ -109,18 +109,10 @@ class StocksInfo:
         Uses a separate price database that can be updated on (or from) Android.
         """
         from pricedb import PriceDbApplication
-        app = PriceDbApplication()
-
-        namespace = None
-        mnemonic = symbol
-        symbol_parts = symbol.split(":")
-        if len(symbol_parts) > 1:
-            namespace = symbol_parts[0]
-            mnemonic = symbol_parts[1]
 
         session = self.__get_pricedb_session()
-        pricedb = app.PriceDbApplication(session)
-        latest_price = pricedb.get_latest_price(symbol)
+        price_db = PriceDbApplication(session)
+        latest_price = price_db.get_latest_price(symbol)
 
         return latest_price
 
