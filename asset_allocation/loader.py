@@ -34,7 +34,7 @@ class AssetAllocationLoader:
         cash_root_name = cfg.get(ConfigKeys.cash_root)
         # Load cash from all accounts under the root.
         gc_db = self.config.get(ConfigKeys.gnucash_book_path)
-        with open_book(gc_db, open_if_lock=False) as book:
+        with open_book(gc_db, open_if_lock=True) as book:
             svc = AccountsAggregate(book)
             root_account = svc.get_by_fullname(cash_root_name)
             acct_svc = AccountAggregate(book, root_account)
