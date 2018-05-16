@@ -5,9 +5,15 @@ import sys
 from decimal import Decimal
 
 import click
+import logging
+import click_log
 
 from asset_allocation.app import AppAggregate
 from asset_allocation.dal import AssetClass
+
+# Initialize click log.
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
 
 
 @click.group()
@@ -83,11 +89,11 @@ def my_list():
 
 
 @click.command("import")
-#, help="The path to the CSV file to import. The first row must contain column names."
 @click.argument("file")
 def my_import(file):
     """ Import Asset Class(es) from a .csv file """
-    lines = ""
+    # , help="The path to the CSV file to import. The first row must contain column names."
+    lines = None
     with open(file) as csv_file:
         lines = csv_file.readlines()
 
@@ -95,7 +101,6 @@ def my_import(file):
     header = lines[0]
     lines.remove(header)
     header = header.rstrip()
-    # print(f"header: {header}")
 
     # Parse records from a csv row.
     counter = 0
@@ -116,8 +121,35 @@ def my_import(file):
     print(f"Data imported. {counter} rows created.")
 
 
+@click.command("tree")
+@click_log.simple_verbosity_option(logger)
+def tree():
+    """ Display a tree of asset classes """
+    session = AppAggregate().open_session()
+    classes = session.query(AssetClass).all()
+    # Get the root classes
+    root = []
+    for ac in classes:
+        if ac.parentid is None:
+            root.append(ac)
+        # logger.debug(ac.parentid)
+    for ac in root:
+        print_children_recursively(classes, ac, 1)
+
+
+def print_children_recursively(all_items, for_item, level):
+    """ Print asset classes recursively """
+    children = [child for child in all_items if child.parentid == for_item.id]
+    for child in children:
+        message = f"{for_item.name}({for_item.id}) is a parent to {child.name}({child.id})"
+        #logger.debug(message)
+        print(message)
+        print_children_recursively(all_items, child, level+1)
+
+
 ac.add_command(add)
 ac.add_command(delete)
 ac.add_command(edit)
 ac.add_command(my_import)
 ac.add_command(my_list)
+ac.add_command(tree)
