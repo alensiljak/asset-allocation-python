@@ -142,7 +142,7 @@ def print_children_recursively(all_items, for_item, level):
     children = [child for child in all_items if child.parentid == for_item.id]
     for child in children:
         message = f"{for_item.name}({for_item.id}) is a parent to {child.name}({child.id})"
-        #logger.debug(message)
+        #indent = ""
         print(message)
         print_children_recursively(all_items, child, level+1)
 
