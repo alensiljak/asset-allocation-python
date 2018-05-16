@@ -1,17 +1,14 @@
 """
-Main entry point to the library
+Main entry point for the users (cli) to the functionality of the library.
 """
 import logging
-import sys
 
 import click
 import click_log
 
-from asset_allocation import dal
 from asset_allocation.app import AppAggregate
 # sub-commands
 from asset_allocation.assetclass_cli import ac
-from asset_allocation.config import Config
 from asset_allocation.config_cli import config
 from asset_allocation.formatters import AsciiFormatter, HtmlFormatter
 from asset_allocation.stocklink_cli import sl
@@ -19,10 +16,12 @@ from asset_allocation.stocklink_cli import sl
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
+
 @click.group()
 @click_log.simple_verbosity_option(logger)
 def cli():
     pass
+
 
 @click.command()
 @click.option("--format", default="ascii", help="format for the report output. ascii or html.")
@@ -45,6 +44,7 @@ def show(format, full):
     # formatters can display stock information with --full
     output = formatter.format(model, full=full)
     print(output)
+
 
 @click.command()
 @click_log.simple_verbosity_option(logger)
