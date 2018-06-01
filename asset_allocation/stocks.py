@@ -63,7 +63,7 @@ class StocksInfo:
                 if not os.path.exists(gc_db):
                     raise ValueError(f"Invalid GnuCash book path {gc_db}")
 
-            self.gc_book = open_book(gc_db)
+            self.gc_book = open_book(gc_db, open_if_lock=True)
         return self.gc_book
 
     def get_symbols_with_positive_balances(self) -> List[str]:
