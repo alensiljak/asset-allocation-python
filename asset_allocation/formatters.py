@@ -1,7 +1,8 @@
 """
 Output formatters for the AA model
 """
-from .model import AssetAllocationModel, AssetClass, Stock
+from decimal import Decimal
+from .model import AssetAllocationModel
 from .maps import ModelMapper
 from .view_model import AssetAllocationViewModel
 
@@ -38,7 +39,7 @@ class AsciiFormatter:
             width = column["width"]
             output += f"{name:^{width}}"
         output += "\n"
-        output += f"----------------------------------------------------------------------\n"
+        output += f"-------------------------------------------------------------------------------\n"
 
         # Asset classes
 
@@ -49,8 +50,8 @@ class AsciiFormatter:
         return output
 
     def __format_row(self, row: AssetAllocationViewModel):
-        """ display-format one row """
-        """ Formats one Asset Class record """
+        """ display-format one row
+        Formats one Asset Class record """
         output = ""
         index = 0
 
@@ -64,19 +65,23 @@ class AsciiFormatter:
         # Set Allocation
         value = ""
         index += 1
-        if row.set_allocation:
+        if row.set_allocation > 0:
             value = f"{row.set_allocation:.2f}"
         output += self.append_num_column(value, index)
 
         # Current Allocation
+        value = ""
         index += 1
-        value = f"{row.curr_allocation:.2f}"
+        if row.curr_allocation > Decimal(0):
+            value = f"{row.curr_allocation:.2f}"
         output += self.append_num_column(value, index)
 
         # Allocation difference, percentage
+        value = ""
         index += 1
         # value = f"{row.diff_allocation:.2f}"
-        value = f"{row.alloc_diff_perc:.0f} %"
+        if row.alloc_diff_perc > Decimal(0):
+            value = f"{row.alloc_diff_perc:.0f} %"
         output += self.append_num_column(value, index)
 
         # Allocated value

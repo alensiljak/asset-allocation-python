@@ -6,8 +6,8 @@ ToC:
     - [Data Store](#data-store)
 - [Tests](#tests)
 - [Distribution](#distribution)
-        - [Test Site](#test-site)
-        - [Production Site](#production-site)
+    - [Test Site](#test-site)
+    - [Production Site](#production-site)
 
 # Asset-Allocation
 Asset Allocation implementation in Python
@@ -42,14 +42,14 @@ To run tests, execute `pytest` from the project root directory.
 
 # Distribution
 
-### Test Site
+## Test Site
 
-```
+```console
 python setup.py sdist upload -r test
 ```
 
-### Production Site
+## Production Site
 
-```
+```console
 python setup.py sdist upload -r pypi
 ```
