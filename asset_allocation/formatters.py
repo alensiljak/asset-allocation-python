@@ -79,8 +79,7 @@ class AsciiFormatter:
         # Allocation difference, percentage
         value = ""
         index += 1
-        # value = f"{row.diff_allocation:.2f}"
-        if row.alloc_diff_perc > Decimal(0):
+        if row.alloc_diff_perc.copy_abs() > Decimal(0):
             value = f"{row.alloc_diff_perc:.0f} %"
         output += self.append_num_column(value, index)
 
