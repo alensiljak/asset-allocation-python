@@ -1,6 +1,7 @@
 """
 Configuration handling
-The config file is stored in data directory and is located by using Resources.
+The config template file is stored in data directory and is located by using Resources. The 
+template is copied to a working copy in the user's home directory on first use.
 Ref: http://peak.telecommunity.com/DevCenter/setuptools#non-package-data-files
 """
 import io
