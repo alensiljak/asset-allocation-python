@@ -1,5 +1,7 @@
 # My files
 .idea/
+/.pytest_cache/*
+/.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -102,4 +104,3 @@ ENV/
 
 # mypy
 .mypy_cache/
-/.vscode/settings.json
