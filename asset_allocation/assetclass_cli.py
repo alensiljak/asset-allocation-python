@@ -133,19 +133,46 @@ def tree():
         if ac.parentid is None:
             root.append(ac)
         # logger.debug(ac.parentid)
-    for ac in root:
-        print_children_recursively(classes, ac, 1)
+    # header
+    print_row("id", "asset class", "allocation", "level")
+    print(f"-------------------------------")
 
+    for ac in root:
+        print_item_with_children(ac, classes, 0)
+
+def print_item_with_children(ac, classes, level):
+    """ Print the given item and all children items """
+    print_row(ac.id, ac.name, f"{ac.allocation:,.2f}", level)
+    print_children_recursively(classes, ac, level + 1)
 
 def print_children_recursively(all_items, for_item, level):
     """ Print asset classes recursively """
     children = [child for child in all_items if child.parentid == for_item.id]
     for child in children:
-        message = f"{for_item.name}({for_item.id}) is a parent to {child.name}({child.id})"
-        #indent = ""
-        print(message)
+        #message = f"{for_item.name}({for_item.id}) is a parent to {child.name}({child.id})"
+        indent = " " * level * 2
+        id = f"{indent} {child.id}"
+        print_row(id, child.name, f"{child.allocation:,.2f}", level)
+
+        # Process children.
         print_children_recursively(all_items, child, level+1)
 
+def print_row(*argv):
+    """ Print one row of data """
+    #for i in range(0, len(argv)):
+        # row += f"{argv[i]}"
+    # columns
+    row = ""
+    # id
+    row += f"{argv[0]:<3}"
+    # name
+    row += f" {argv[1]:<13}"
+    # allocation
+    row += f" {argv[2]:>5}"
+    # level
+    #row += f"{argv[3]}"
+
+    print(row)
 
 ac.add_command(add)
 ac.add_command(delete)
