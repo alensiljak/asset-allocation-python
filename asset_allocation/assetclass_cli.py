@@ -151,8 +151,8 @@ def print_children_recursively(all_items, for_item, level):
     for child in children:
         #message = f"{for_item.name}({for_item.id}) is a parent to {child.name}({child.id})"
         indent = " " * level * 2
-        id = f"{indent} {child.id}"
-        print_row(id, child.name, f"{child.allocation:,.2f}", level)
+        id_col = f"{indent} {child.id}"
+        print_row(id_col, child.name, f"{child.allocation:,.2f}", level)
 
         # Process children.
         print_children_recursively(all_items, child, level+1)
