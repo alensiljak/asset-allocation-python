@@ -4,4 +4,4 @@ cls
 
 pylint asset_allocation --output-format=colorized
 
-::pause
+pause

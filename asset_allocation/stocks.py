@@ -5,9 +5,10 @@ from typing import List
 
 from pkg_resources import Requirement, resource_filename
 
-import piecash
-from gnucash_portfolio.securities import SecuritiesAggregate, SecurityAggregate
+#import piecash
 from piecash import Book, Commodity, open_book
+from gnucash_portfolio.securitiesaggregate import SecuritiesAggregate
+
 from pricedb import PriceModel, SecuritySymbol
 
 from .config import Config, ConfigKeys
@@ -59,7 +60,8 @@ class StocksInfo:
                 raise AttributeError("GnuCash book path not configured.")
             # check if this is the abs file exists
             if not os.path.isabs(gc_db):
-                gc_db = resource_filename(Requirement.parse("Asset-Allocation"), gc_db)
+                gc_db = resource_filename(
+                    Requirement.parse("Asset-Allocation"), gc_db)
                 if not os.path.exists(gc_db):
                     raise ValueError(f"Invalid GnuCash book path {gc_db}")
 
