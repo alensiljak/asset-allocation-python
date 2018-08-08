@@ -136,9 +136,11 @@ class AppAggregate:
         if namespace:
             full_symbol = f"{namespace}:{symbol}"
 
-        result = self.session.query(AssetClassStock)
-            .filter(AssetClassStock.symbol == full_symbol)
-            .all()
+        result = (
+            self.session.query(AssetClassStock)
+                .filter(AssetClassStock.symbol == full_symbol)
+                .all()
+        )
         return result
 
     def validate_model(self):
