@@ -138,8 +138,8 @@ class AppAggregate:
 
         result = (
             self.session.query(AssetClassStock)
-                .filter(AssetClassStock.symbol == full_symbol)
-                .all()
+            .filter(AssetClassStock.symbol == full_symbol)
+            .all()
         )
         return result
 

@@ -5,8 +5,8 @@ from typing import List
 
 from pkg_resources import Requirement, resource_filename
 
-#import piecash
-from piecash import Book, Commodity, open_book
+import piecash
+from piecash import Book, open_book
 from gnucash_portfolio.securitiesaggregate import SecuritiesAggregate
 
 from pricedb import PriceModel, SecuritySymbol
