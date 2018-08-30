@@ -5,6 +5,10 @@
 ::   `keyring set https://test.pypi.org/legacy/ your-username`
 :: [keyring support](https://twine.readthedocs.io/en/latest/#keyring-support).
 
+:: Clean-up the destination
+del dist\*
+pause
+
 :: Create the binary package.
 setup.py sdist bdist_wheel
 
