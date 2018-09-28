@@ -24,7 +24,7 @@ def ac():
 
 @click.command()
 # , prompt="Asset Class name") # help="Name of the Asset Class"
-@click.argument("name", "-n")
+@click.argument("name") # , "-n"
 def add(name):
     """ Add new Asset Class """
     item = AssetClass()
