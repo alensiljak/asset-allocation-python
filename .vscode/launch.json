@@ -6,21 +6,21 @@
     "configurations": [
         {
             "name": "Attach (Remote Debug)",
-            "type": "pythonExperimental",
+            "type": "python",
             "request": "attach",
             "port": 3000,
             "host": "localhost"
         },
         {
-            "name": "Python Experimental: Terminal (external)",
-            "type": "pythonExperimental",
+            "name": "Python: Terminal (external)",
+            "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "externalTerminal"
         },
         {
-            "name": "Python Experimental: Terminal (integrated)",
-            "type": "pythonExperimental",
+            "name": "Python: Terminal (integrated)",
+            "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
