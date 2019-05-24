@@ -20,7 +20,7 @@ class _AssetBase:
         self.parent: AssetClass = None
 
         self.name = None
-        # Set allocation %.
+        # Defined allocation %.
         self.allocation = Decimal(0)
         # How much is currently allocated, in %.
         self.curr_alloc = Decimal(0)
@@ -173,11 +173,14 @@ class AssetAllocationModel:
         self.currency = None
         # Child classes, the first-level only. This is the beginning of the tree.
         self.classes: List[AssetClass] = []
-        
+
         # Index of all asset classes. Linear representation.
         self.asset_classes: List[AssetClass] = []
         # Index of all Stocks
         self.stocks: List[Stock] = []
+
+        # The new list, to avoid breaking others
+        self.list = []
 
     def get_class_by_id(self, ac_id: int) -> AssetClass:
         """ Finds the asset class by id """

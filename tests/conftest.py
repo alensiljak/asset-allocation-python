@@ -20,6 +20,20 @@ from asset_allocation.config import Config
 #     return svc
 
 @pytest.fixture(scope="session")
+def aa_definition():
+    ''' return the contents of the definition file '''
+    definition = '''
+    Allocation                                   100.00
+    Allocation:Equity                             55.00
+    Allocation:Fixed                              30.00
+    Allocation:Fixed:Gov                          20.00
+    Allocation:Fixed:Corp                         10.00
+    Allocation:Real                               12.00
+    Allocation:Cash                                3.00
+    '''
+    return definition
+
+@pytest.fixture(scope="session")
 def config():
     """ Test configuration """
     return Config("data/asset_allocation.ini")
