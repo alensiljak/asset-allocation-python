@@ -9,5 +9,13 @@ class AppLedger:
     def get_asset_allocation(self):
         ''' the main method '''
         loader = AssetAllocationLoaderLedger()
-        model = loader.load_definition()
-        return model
+        # todo: load definition file
+        definition = ""
+
+        aa = loader.load_dictionary(definition)
+
+        # todo validate: ac % must match the sum of it's children's.
+
+        # todo load stock links: parse asset_allocation.ledger file
+
+        return aa

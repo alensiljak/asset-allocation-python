@@ -54,7 +54,8 @@ class AssetAllocationLoaderLedger:
         return aa_root
 
     def load_definition(self, definition: str = None):
-        ''' load aa definition from a file '''
+        ''' Do not use!
+        load aa definition from a file '''
         model = AssetAllocationModel()
 
         # if definition passed, use it.
