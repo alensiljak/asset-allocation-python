@@ -10,6 +10,11 @@ from .loader import AssetAllocationLoader
 from .model import AssetAllocationModel
 
 
+class AppLedger:
+    ''' The version of the application which uses ledger files '''
+    pass
+
+
 class AppAggregate:
     """ Provides entry points to the application """
 
