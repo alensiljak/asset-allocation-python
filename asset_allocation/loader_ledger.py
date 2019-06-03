@@ -54,8 +54,7 @@ class AssetAllocationLoaderLedger:
         return aa_root
 
     def load_definition(self, definition: str = None):
-        ''' Do not use!
-        load aa definition from a file '''
+        ''' load aa definition from a file '''
         model = AssetAllocationModel()
 
         # if definition passed, use it.
@@ -89,7 +88,7 @@ class AssetAllocationLoaderLedger:
                 asset_class.name = name
 
             # maintain index: name/value pair
-            model.list.append({ 'fullname': name, 'asset_class': asset_class})
+            model.list.append({'fullname': name, 'asset_class': asset_class})
 
         return model
 
